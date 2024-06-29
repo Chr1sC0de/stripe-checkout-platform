@@ -20,6 +20,7 @@ fi
 . .venv/bin/activate;
 
 python -m pip install pdm;
+python -m pip install ruff;
 
 # check what branch we are on and see if we can
 
