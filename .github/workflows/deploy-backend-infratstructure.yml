@@ -2,6 +2,7 @@ name: Deploy Backend Infrastructure
 on:
   workflow_dispatch:
     inputs:
+      # set the environment name
       environment:
         default: null
         required: false
@@ -11,5 +12,7 @@ jobs:
   deploy-backend-infrastructure:
     runs-on: ubuntu-20.04
     steps:
+      - name: Print Variables
+        run: echo "$DEVELOPMENT_ENVIRONMENT"
       - name: Install AWS CLI
         run: echo "$DEVELOPMENT_ENVIRONMENT"
