@@ -9,4 +9,4 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Install AWS CLI
-      - run: echo "hello world"
+        run: echo "hello world"
