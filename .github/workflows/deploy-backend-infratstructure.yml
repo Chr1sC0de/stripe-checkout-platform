@@ -8,6 +8,8 @@ on:
         required: false
 env:
   DEVELOPMENT_ENVIRONMENT: ${{ inputs.environment.default || github.ref_name == 'master' && 'dev0' || 'dev1'}}
+  CDK_DEFAULT_REGION: ${{ vars.CDK_DEFAULT_REGION }}
+  COMPANY: ${{ vars.COMPANY }}
 jobs:
   deploy-backend-infrastructure:
     runs-on: ubuntu-20.04
