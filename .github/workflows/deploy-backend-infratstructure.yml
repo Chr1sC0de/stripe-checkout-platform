@@ -15,5 +15,7 @@ jobs:
       - name: Print Directory
         run: |
           echo "INFO: current working directory: $(pwd)"
+          echo "INFO: current working directory contents: $(ls)"
       - name: Print Variables
-        run: . ./scripts/initialize_backend_print_variables.sh
+        run: |
+          . ./scripts/initialize_backend_print_variables.sh
