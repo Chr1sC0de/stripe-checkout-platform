@@ -87,7 +87,7 @@ class InfrastructureStack(Stack):
         if api_url is not None:
             callback_urls.append(f"{api_url}oauth2/token/callback")
 
-        if utils.ENVIRONMENT == "dev":
+        if utils.ENVIRONMENT.startswith("dev"):
             callback_urls.extend(
                 [
                     r"https://0.0.0.0:8000/oauth2/token/callback",
