@@ -10,5 +10,4 @@ jobs:
     steps:
       - name: Print
         run: |
-          echo '"the development environment: $(DEVELOPMENT_ENVIRONMENT)"'
-
+          echo "the development environment: $(DEVELOPMENT_ENVIRONMENT)"
