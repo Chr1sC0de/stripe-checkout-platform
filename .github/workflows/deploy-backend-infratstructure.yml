@@ -1,14 +1,14 @@
 name: Deploy Backend Infrastructure
+environment: Development
 on:
-   workflow_dispatch:
-     inputs:
-       environment:
-         default: dev0
+  workflow_dispatch:
+    inputs:
+      environment:
+        default: ${{vars.DEVELOPMENT_ENVIRONMENT}}"
 jobs:
   bash-example:
     runs-on: ubuntu-20.04
-    environment: Development
     steps:
       - name: Print
         run: |
-          echo "the development environment: $DEVELOPMENT_ENVIRONMENT"
+          echo "the development environment: "
