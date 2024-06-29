@@ -7,6 +7,7 @@ on:
 jobs:
   bash-example:
     runs-on: ubuntu-20.04
+    environment: Development
     steps:
       - name: Print
         run: |
