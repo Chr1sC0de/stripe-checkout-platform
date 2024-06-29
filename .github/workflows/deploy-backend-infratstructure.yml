@@ -4,6 +4,8 @@ on:
     inputs:
       environment:
         default: ${{ github.ref_name == 'master' && 'dev0' || 'dev1' }}
+        # default: ${{ github.ref == 'refs/heads/main' && 'value_for_main_branch' || 'value_for_other_branches' }}
+        required: false
 jobs:
   deploy-backend-infrastructure:
     runs-on: ubuntu-20.04
