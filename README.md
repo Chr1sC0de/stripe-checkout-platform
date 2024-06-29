@@ -1,2 +1,3 @@
 # stripe-checkout-platform
-Template for a checkout platform
+
+A template for a checkout platform
