@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        default: ${{ github.ref_name == 'master' && 'dev0' || 'dev1'}}
+        default: ${{ github.ref_name == 'master' && 'dev0' || 'dev1' }}
 jobs:
   deploy-backend-infrastructure:
     runs-on: ubuntu-20.04
