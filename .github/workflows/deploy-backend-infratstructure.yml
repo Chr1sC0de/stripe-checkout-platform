@@ -4,12 +4,10 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        default: ${{ vars.DEVELOPMENT_ENVIRONMENT }}"
+        default: ${{ github.ref_name == 'master' && 'dev0' || 'dev1'}}
 jobs:
-  bash-example:
+  deploy-backend-infrastructure:
     runs-on: ubuntu-20.04
     steps:
-      - name: Print
-        run: |
-          echo "CDK_DEFAULT_REGION  : ${{ vars.CDK_DEFAULT_REGION }}"
-          echo "COMPANY  : ${{ vars.COMPANY }}"
+      - name: Install AWS CLI
+      - run: echo "hello world"
