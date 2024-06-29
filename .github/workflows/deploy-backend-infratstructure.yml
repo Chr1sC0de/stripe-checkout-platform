@@ -1,5 +1,4 @@
 name: Deploy Backend Infrastructure
-environment: Development
 on:
   workflow_dispatch:
     inputs:
