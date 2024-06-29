@@ -3,12 +3,13 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        default: ${{ github.ref_name == 'master' && 'dev0' || 'dev1' }}
-        # default: ${{ github.ref == 'refs/heads/main' && 'value_for_main_branch' || 'value_for_other_branches' }}
+        default: null
         required: false
+env:
+  DEVELOPMENT_ENVIRONMENT: ${{ inputs.environment.default || github.ref_name == 'master' && 'dev0' || 'dev1'}}
 jobs:
   deploy-backend-infrastructure:
     runs-on: ubuntu-20.04
     steps:
       - name: Install AWS CLI
-        run: echo "hello world"
+        run: echo "$DEVELOPMENT_ENVIRONMENT"
