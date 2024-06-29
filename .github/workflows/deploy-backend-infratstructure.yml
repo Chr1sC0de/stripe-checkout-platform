@@ -4,12 +4,12 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        default: ${{vars.DEVELOPMENT_ENVIRONMENT}}"
+        default: ${{ vars.DEVELOPMENT_ENVIRONMENT }}"
 jobs:
   bash-example:
     runs-on: ubuntu-20.04
     steps:
       - name: Print
         run: |
-          echo "CDK_DEFAULT_REGION  : ${{vars.CDK_DEFAULT_REGION}}"
-          echo "COMPANY  : ${{vars.COMPANY}}"
+          echo "CDK_DEFAULT_REGION  : ${{ vars.CDK_DEFAULT_REGION }}"
+          echo "COMPANY  : ${{ vars.COMPANY }}"
