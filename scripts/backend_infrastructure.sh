@@ -28,6 +28,7 @@ if ![ -x "$(command -v cdk)" ]; then
     echo "INFO: No cdk command, installing";
     npm install -g aws-cdk
     echo "INFO: Finished installing cdk";
+fi
 
 echo "INFO: The current cdk version is: $(cdk --version)";
 
