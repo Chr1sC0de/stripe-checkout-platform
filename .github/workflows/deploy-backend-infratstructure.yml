@@ -10,9 +10,16 @@ on:
         default: ap-southeast-2
         required: false
         type: string
+      mode:
+        default: deploy
+        required: false
+        type: choice
+        options:
+          - deploy
+          - destroy
 env:
-  DEVELOPMENT_ENVIRONMENT: ${{ inputs.environment.default || github.ref_name == 'master' && 'dev0' || 'dev1'}}
-  AWS_DEFAULT_REGION: ${{ inputs.region.default }}
+  DEVELOPMENT_ENVIRONMENT: ${{ inputs.environment || github.ref_name == 'master' && 'dev0' || 'dev1'}}
+  AWS_DEFAULT_REGION: ${{ inputs.region }}
   COMPANY: ${{ vars.COMPANY }}
   DEV_AWS_ACCESS_KEY_ID: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
   DEV_AWS_SECRET_ACCESS_KEY: ${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}
