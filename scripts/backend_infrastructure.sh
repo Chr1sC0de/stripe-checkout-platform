@@ -64,7 +64,7 @@ if [[ $MODE != 'synth' ]]; then
     # Check if the bootstrap stack exists
     STACK_EXISTS=$(aws cloudformation describe-stacks --stack-name "$BOOTSTRAP_STACK_NAME" 2>&1)
 
-    if echo "$STACK_EXISTS" | grep -q 'does not exist'; then
+    if [[ -z echo "$STACK_EXISTS" | grep -q 'does not exist' ]]; then
         echo "INFO: Bootstrap stack does not exist. Running CDK bootstrap..."
         cdk bootstrap
 
