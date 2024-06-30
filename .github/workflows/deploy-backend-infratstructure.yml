@@ -33,3 +33,6 @@ jobs:
         run: |
           echo "INFO: the current working python environment is: $(which python)"
           echo "INFO: the current aws cdk version is: $(cdk --version)"
+      - name: Ensure Python and CDK installed
+        run: |
+          . ./scripts/setup_aws_environment_variables.sh; cd ./backend/infrastructure; cdk deploy
