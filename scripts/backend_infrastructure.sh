@@ -13,7 +13,7 @@ if [[ $DEVELOPMENT_ENVIRONMENT == dev* ]]; then
     export FACEBOOK_CLIENT_ID=$DEV_FACEBOOK_CLIENT_ID
     export FACEBOOK_CLIENT_SECRET=$DEV_FACEBOOK_CLIENT_SECRET
 elif [[ $DEVELOPMENT_ENVIRONMENT == prod ]]; then
-    echo 'ERRO: Product Environment Not Implemented';
+    echo 'ERROR: Product Environment Not Implemented';
     exit 1;
 else
     echo "ERROR: Invalid Environment $DEVELOPMENT_ENVIRONMENT"
@@ -33,4 +33,11 @@ fi
 echo "INFO: The current cdk version is: $(cdk --version)";
 
 cd ./backend/infrastructure
-cdk deploy
+if [[ $DEPLOYMENT_MODE == "deploy" ]]; then
+    cdk deploy
+elif [[ $DEPLOYMENT_MODE == "destroy" ]]; then
+    cdk destroy
+else
+    echo "ERROR: Invalid deployment mode: $DEPLOYMENT_MODE"
+    exit 1
+fi
