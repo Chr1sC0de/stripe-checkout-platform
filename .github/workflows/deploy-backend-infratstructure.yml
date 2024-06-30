@@ -6,9 +6,13 @@ on:
         default: null
         required: false
         type: string
+      region:
+        default: ap-southeast-2
+        required: false
+        type: string
 env:
   DEVELOPMENT_ENVIRONMENT: ${{ inputs.environment.default || github.ref_name == 'master' && 'dev0' || 'dev1'}}
-  CDK_DEFAULT_REGION: ${{ vars.CDK_DEFAULT_REGION }}
+  AWS_DEFAULT_REGION: ${{ inputs.environment.region }}
   COMPANY: ${{ vars.COMPANY }}
   DEV_AWS_ACCESS_KEY_ID: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
   DEV_AWS_SECRET_ACCESS_KEY: ${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}
