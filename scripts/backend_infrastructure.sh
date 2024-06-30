@@ -1,7 +1,10 @@
 #! /bin/bash
 
-# this script sets the aws credentials required to run the cdk to make the deployment
+export source_folder=$(dirname -- "${BASH_SOURCE}");
 
+cd "$source_folder/..";
+
+echo "INFO: Setting aws and service provider keys";
 if [[ $DEVELOPMENT_ENVIRONMENT == dev* ]]; then
     echo "INFO: Running in development environment: $DEVELOPMENT_ENVIRONMENT";
     export AWS_ACCESS_KEY_ID=$DEV_AWS_ACCESS_KEY_ID
@@ -16,3 +19,19 @@ else
     echo "ERROR: Invalid Environment $DEVELOPMENT_ENVIRONMENT"
     exit 1
 fi
+echo "INFO: Finished setting aws and service provider keys";
+
+echo "INFO: The current aws cli version is: $(aws --version)"
+echo "INFO: The current npm version is: $(npm --version)"
+
+if ![ -x "$(command -v cdk)" ]; then
+    echo "INFO: No cdk command, installing";
+    npm install -g aws-cdk
+    echo "INFO: Finished installing cdk";
+
+echo "INFO: The current cdk version is: $(cdk --version)";
+
+
+. ./scripts/setup_aws_environment_variables.sh
+cd ./backend/infrastructure
+cdk deploy

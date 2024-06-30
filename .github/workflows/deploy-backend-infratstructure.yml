@@ -2,9 +2,11 @@ name: Deploy Backend Infrastructure
 on:
   workflow_dispatch:
     inputs:
-      # set the environment name
       environment:
         default: null
+        required: false
+      region:
+        default: ap-southeast-2
         required: false
 env:
   DEVELOPMENT_ENVIRONMENT: ${{ inputs.environment.default || github.ref_name == 'master' && 'dev0' || 'dev1'}}
@@ -14,7 +16,6 @@ env:
   DEV_AWS_SECRET_ACCESS_KEY: ${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}
   DEV_AWS_SESSION_TOKEN: ${{ secrets.DEV_AWS_SESSION_TOKEN }}
   DEV_FACEBOOK_CLIENT_ID: ${{ secrets.DEV_FACEBOOK_CLIENT_ID }}
-  DEV_FACEBOOK_CLIENT_SECRET: ${{ secrets.DEV_FACEBOOK_CLIENT_SECRET }}
 jobs:
   deploy-backend-infrastructure:
     runs-on: ubuntu-20.04
@@ -24,17 +25,8 @@ jobs:
       - name: Initialize Python Backend
         run: |
           ./scripts/initialize_backend_python_environment.sh
-      - name: Set the environment variables
+      - name: Set The GitHub Environment
         run: . ./.venv/bin/activate; echo PATH=$PATH >> $GITHUB_ENV
-      - name: Check AWS CLI and CDK Version
-        run: |
-          echo "INFO: the current aws cli version is: $(aws --version)"
-          echo "INFO: the current aws npm version is: $(npm --version)"
-          npm install -g aws-cdk
-      - name: Ensure Python and CDK installed
-        run: |
-          echo "INFO: the current working python environment is: $(which python)"
-          echo "INFO: the current aws cdk version is: $(cdk --version)"
       - name: Deploy Backend Infrastructure
         run: |
-          . ./scripts/setup_aws_environment_variables.sh; cd ./backend/infrastructure; cdk deploy
+          ./scripts/backend_infrastructure.sh
