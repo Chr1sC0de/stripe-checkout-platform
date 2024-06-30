@@ -110,18 +110,21 @@ class InfrastructureStack(Stack):
         name_lower = name.lower()
 
         client_id_environment_variable = f"{name_upper}_CLIENT_ID"
-        client_secret_envrionment_variable = f"{name_upper}_CLIENT_SECRET"
+        client_secret_environment_variable = f"{name_upper}_CLIENT_SECRET"
 
         client_id = os.environ.get(client_id_environment_variable, None)
-        client_secret = os.environ.get(client_secret_envrionment_variable, None)
+        client_secret = os.environ.get(client_secret_environment_variable, None)
 
         for check, variable in zip(
             [client_id, client_secret],
-            [client_id_environment_variable, client_secret_envrionment_variable],
+            [client_id_environment_variable, client_secret_environment_variable],
         ):
             assert (
                 check is not None
-            ), f"ERROR: {client_id_environment_variable} is None, please set before attempting to deploy"
+            ), f"ERROR: {check} is None, please set before attempting to deploy"
+            assert (
+                check != ""
+            ), f"ERROR: {check} is empty, please set a valid value before attempting to deploy"
 
         cognito.UserPoolIdentityProviderFacebook(
             self,

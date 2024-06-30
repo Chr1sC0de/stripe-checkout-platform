@@ -1,0 +1,45 @@
+name: Backend Infrastructure
+on:
+  workflow_dispatch:
+    inputs:
+      development_environment:
+        default: auto
+        required: false
+        type: string
+      region:
+        default: ap-southeast-2
+        required: false
+        type: string
+      mode:
+        default: deploy
+        required: false
+        type: choice
+        options:
+          - deploy
+          - synth
+          - destroy
+env:
+  DEVELOPMENT_ENVIRONMENT: ${{ inputs.development_environment }}
+  AWS_DEFAULT_REGION: ${{ inputs.region }}
+  MODE: ${{ inputs.mode }}
+  COMPANY: ${{ vars.COMPANY }}
+  DEV_AWS_ACCESS_KEY_ID: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
+  DEV_AWS_SECRET_ACCESS_KEY: ${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}
+  DEV_AWS_SESSION_TOKEN: ${{ secrets.DEV_AWS_SESSION_TOKEN }}
+  DEV_FACEBOOK_CLIENT_ID: ${{ secrets.DEV_FACEBOOK_CLIENT_ID }}
+  DEV_FACEBOOK_CLIENT_SECRET: ${{ secrets.DEV_FACEBOOK_CLIENT_SECRET }}
+jobs:
+  infrastructure:
+    runs-on: ubuntu-20.04
+    name: ${{ inputs.mode }}-backend-infrastructure
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Initialize Python Backend
+        run: |
+          . ./scripts/initialize_backend_python_environment.sh
+      - name: Set The GitHub Environment
+        run: . ./.venv/bin/activate; echo PATH=$PATH >> $GITHUB_ENV
+      - name: Backend Infrastructure
+        run: |
+          . ./scripts/backend_infrastructure.sh
