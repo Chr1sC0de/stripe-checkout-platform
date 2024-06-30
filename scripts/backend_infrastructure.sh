@@ -34,7 +34,7 @@ if [[ $DEVELOPMENT_ENVIRONMENT == dev* ]]; then
     export FACEBOOK_CLIENT_ID=$DEV_FACEBOOK_CLIENT_ID
     export FACEBOOK_CLIENT_SECRET=$DEV_FACEBOOK_CLIENT_SECRET
 elif [[ $DEVELOPMENT_ENVIRONMENT == prod ]]; then
-    echo 'ERROR: Product Environment Not Implemented'
+    echo 'ERROR: Production Environment Not Implemented'
     exit 1
 else
     echo "ERROR: Invalid Environment $DEVELOPMENT_ENVIRONMENT"
