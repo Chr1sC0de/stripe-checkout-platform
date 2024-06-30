@@ -13,6 +13,8 @@ env:
   DEV_AWS_ACCESS_KEY_ID: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
   DEV_AWS_SECRET_ACCESS_KEY: ${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}
   DEV_AWS_SESSION_TOKEN: ${{ secrets.DEV_AWS_SESSION_TOKEN }}
+  DEV_FACEBOOK_CLIENT_ID: ${{ secrets.FACEBOOK_CLIENT_ID }}
+  DEV_FACEBOOK_CLIENT_SECRET: ${{ secrets.FACEBOOK_CLIENT_SECRET }}
 jobs:
   deploy-backend-infrastructure:
     runs-on: ubuntu-20.04
@@ -33,6 +35,6 @@ jobs:
         run: |
           echo "INFO: the current working python environment is: $(which python)"
           echo "INFO: the current aws cdk version is: $(cdk --version)"
-      - name: Ensure Python and CDK installed
+      - name: Deploy Backend Infrastructure
         run: |
-          . ./scripts/setup_aws_environment_variables.sh; cd ./backend/infrastructure; cdk deploy —require-approval never
+          . ./scripts/setup_aws_environment_variables.sh; cd ./backend/infrastructure; cdk deploy -—require-approval never

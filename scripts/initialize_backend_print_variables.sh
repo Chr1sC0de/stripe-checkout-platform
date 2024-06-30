@@ -1,6 +1,0 @@
-#! /bin/bash
-
-echo "INFO: current working directory: $(pwd)"
-echo "INFO: CDK_DEFAULT_REGION=$CDK_DEFAULT_REGION"
-echo "INFO: COMPANY=$COMPANY"
-echo "INFO: DEVELOPMENT_ENVIRONMENT=$DEVELOPMENT_ENVIRONMENT"
