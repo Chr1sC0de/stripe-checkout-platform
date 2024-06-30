@@ -35,15 +35,15 @@ echo "INFO: The current cdk version is: $(cdk --version)";
 
 cd ./backend/infrastructure;
 
-if [[ $DEPLOYMENT_MODE == "deploy" ]]; then
+if [[ $MODE == "deploy" ]]; then
     echo "INFO: Deploying infrastructure";
     cdk deploy;
-    echo "INFO: Finisehd deploying infrastructure";
-elif [[ $DEPLOYMENT_MODE == "destroy" ]]; then
+    echo "INFO: Finished deploying infrastructure";
+elif [[ $MODE == "destroy" ]]; then
     echo "INFO: Destroying infrastructure";
     cdk destroy;
     echo "INFO: Finished destroying infrastructure";
 else
-    echo "ERROR: Invalid deployment mode: $DEPLOYMENT_MODE";
+    echo "ERROR: Invalid deployment mode: $MODE";
     exit 1;
 fi
