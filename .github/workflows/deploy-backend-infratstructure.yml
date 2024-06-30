@@ -24,9 +24,9 @@ jobs:
         uses: actions/checkout@v4
       - name: Initialize Python Backend
         run: |
-          ./scripts/initialize_backend_python_environment.sh
+          . ./scripts/initialize_backend_python_environment.sh
       - name: Set The GitHub Environment
         run: . ./.venv/bin/activate; echo PATH=$PATH >> $GITHUB_ENV
       - name: Deploy Backend Infrastructure
         run: |
-          ./scripts/backend_infrastructure.sh
+          . ./scripts/backend_infrastructure.sh
