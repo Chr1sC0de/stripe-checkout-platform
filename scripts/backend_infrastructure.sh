@@ -65,7 +65,7 @@ if [[ $MODE != 'synth' ]]; then
         echo "INFO: Bootstrap stack does not exist. Running CDK bootstrap..."
         cdk bootstrap
 
-        if [[ $? -eq 0 ]]; then
+        if [[ $? == 0 ]]; then
             echo "INFO: CDK bootstrap completed successfully."
         else
             echo "ERROR: CDK bootstrap failed."
