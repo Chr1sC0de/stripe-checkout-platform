@@ -4,7 +4,7 @@ export source_folder=$(dirname -- "${BASH_SOURCE}");
 
 # set the folder to the root directory
 
-cd $source_folder/..;
+cd "$source_folder/..";
 
 # now create the python virtual environment if it does not exist
 
@@ -13,7 +13,7 @@ if [ -d ".venv" ]; then
 else
     echo "INFO: .venv does not exist, creating";
     python -m venv .venv;
-fi
+fi;
 
 # activate the environment
 
