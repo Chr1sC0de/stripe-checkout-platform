@@ -1,5 +1,9 @@
 #! /bin/bash
 
+if [ -d ~/.aws/config ]; then
+    rm ~/.aws/config
+fi
+
 export source_folder=$(dirname -- "${BASH_SOURCE}")
 
 cd "$source_folder/.."
