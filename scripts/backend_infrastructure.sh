@@ -6,7 +6,7 @@ cd "$source_folder/..";
 
 echo "INFO: Setting aws and service provider keys";
 
-export $CURRENT_BRANCH=$(git branch --show-current)
+export $CURRENT_BRANCH="$(git branch --show-current)"
 
 if [[ $DEVELOPMENT_ENVIRONMENT == auto ]]; then
 
