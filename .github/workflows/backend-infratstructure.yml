@@ -29,7 +29,7 @@ env:
   DEV_FACEBOOK_CLIENT_ID: ${{ secrets.DEV_FACEBOOK_CLIENT_ID }}
   DEV_FACEBOOK_CLIENT_SECRET: ${{ secrets.DEV_FACEBOOK_CLIENT_SECRET }}
 jobs:
-  backend-infrastructure:
+  infrastructure:
     runs-on: ubuntu-20.04
     name: ${{ inputs.mode }}-backend-infrastructure
     steps:
