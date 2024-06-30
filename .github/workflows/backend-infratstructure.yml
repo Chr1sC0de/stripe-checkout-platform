@@ -29,8 +29,9 @@ env:
   DEV_FACEBOOK_CLIENT_ID: ${{ secrets.DEV_FACEBOOK_CLIENT_ID }}
   DEV_FACEBOOK_CLIENT_SECRET: ${{ secrets.DEV_FACEBOOK_CLIENT_SECRET }}
 jobs:
-  deploy-backend-infrastructure:
+  backend-infrastructure:
     runs-on: ubuntu-20.04
+    name: ${{ inputs.mode }}-backend-infrastructure
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -39,6 +40,6 @@ jobs:
           . ./scripts/initialize_backend_python_environment.sh
       - name: Set The GitHub Environment
         run: . ./.venv/bin/activate; echo PATH=$PATH >> $GITHUB_ENV
-      - name: Deploy Backend Infrastructure
+      - name: Backend Infrastructure
         run: |
           . ./scripts/backend_infrastructure.sh
