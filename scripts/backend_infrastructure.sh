@@ -39,6 +39,10 @@ if [[ $MODE == "deploy" ]]; then
     echo "INFO: Deploying infrastructure";
     cdk deploy;
     echo "INFO: Finished deploying infrastructure";
+elif [[ $MODE == "synth" ]]; then
+    echo "INFO: Synthesizing infrastructure";
+    cdk synth;
+    echo "INFO: Finished Synthesizing infrastructure";
 elif [[ $MODE == "destroy" ]]; then
     echo "INFO: Destroying infrastructure";
     cdk destroy;

@@ -1,4 +1,4 @@
-name: Deploy Backend Infrastructure
+name: Backend Infrastructure
 on:
   workflow_dispatch:
     inputs:
@@ -16,6 +16,7 @@ on:
         type: choice
         options:
           - deploy
+          - synth
           - destroy
 env:
   DEVELOPMENT_ENVIRONMENT: ${{ inputs.environment || github.ref_name == 'master' && 'dev0' || 'dev1'}}
