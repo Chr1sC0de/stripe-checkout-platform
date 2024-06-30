@@ -10,15 +10,15 @@ export CURRENT_BRANCH="$(git branch --show-current)"
 
 if [[ $DEVELOPMENT_ENVIRONMENT == auto ]]; then
 
-    echo "INFO: Auto seting environment";
+    echo "INFO: Auto seting environment"
     if [[  $CURRENT_BRANCH == 'release ']]; then
-        export DEVELOPMENT_ENVIRONMENT='prod';
+        export DEVELOPMENT_ENVIRONMENT='prod'
     elif [[  $CURRENT_BRANCH == 'master ']]; then
-        export DEVELOPMENT_ENVIRONMENT='dev0';
+        export DEVELOPMENT_ENVIRONMENT='dev0'
     else
-        export DEVELOPMENT_ENVIRONMENT='dev1';
-    fi;
-    echo "INFO: Finished auto setting environment: $DEVELOPMENT_ENVIRONMENT";
+        export DEVELOPMENT_ENVIRONMENT='dev1'
+    fi
+    echo "INFO: Finished auto setting environment: $DEVELOPMENT_ENVIRONMENT"
 
 fi;
 
