@@ -56,7 +56,7 @@ cd ./backend/infrastructure;
 
 export BOOTSTRAP_STACK_NAME="CDKToolkit"
 
-if [[ $MODE != 'synth']]; then
+if [[ $MODE != 'synth' ]]; then
 
     # Define the bootstrap stack name (this can vary based on your CDK app configuration)
     BOOTSTRAP_STACK_NAME="CDKToolkit"
@@ -68,7 +68,7 @@ if [[ $MODE != 'synth']]; then
         echo "INFO: Bootstrap stack does not exist. Running CDK bootstrap..."
         cdk bootstrap
 
-        if [ $? -eq 0 ]; then
+        if [[ $? -eq 0 ]]; then
             echo "INFO: CDK bootstrap completed successfully."
         else
             echo "ERROR: CDK bootstrap failed."
