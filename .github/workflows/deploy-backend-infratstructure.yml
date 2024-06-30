@@ -12,7 +12,7 @@ on:
         type: string
 env:
   DEVELOPMENT_ENVIRONMENT: ${{ inputs.environment.default || github.ref_name == 'master' && 'dev0' || 'dev1'}}
-  AWS_DEFAULT_REGION: ${{ inputs.environment.region }}
+  AWS_DEFAULT_REGION: ${{ inputs.region.default }}
   COMPANY: ${{ vars.COMPANY }}
   DEV_AWS_ACCESS_KEY_ID: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
   DEV_AWS_SECRET_ACCESS_KEY: ${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}
