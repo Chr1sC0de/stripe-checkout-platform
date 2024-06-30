@@ -5,6 +5,22 @@ export source_folder=$(dirname -- "${BASH_SOURCE}");
 cd "$source_folder/..";
 
 echo "INFO: Setting aws and service provider keys";
+
+export $CURRENT_BRANCH=$(git branch --show-current)
+
+if [[ $DEVELOPMENT_ENVIRONMENT == auto ]]; then
+
+    echo "INFO: Auto seting environment"
+    if [[  $CURRENT_BRANCH == 'release ']]; then
+        export DEVELOPMENT_ENVIRONMENT='prod';
+    elif [[  $CURRENT_BRANCH == 'master ']]; then
+        export DEVELOPMENT_ENVIRONMENT='dev0';
+    else
+        export DEVELOPMENT_ENVIRONMENT='dev1';
+    fi;
+    echo "INFO: Finished auto setting environment: $DEVELOPMENT_ENVIRONMENT"
+fi
+
 if [[ $DEVELOPMENT_ENVIRONMENT == dev* ]]; then
     echo "INFO: Running in development environment: $DEVELOPMENT_ENVIRONMENT";
     export AWS_ACCESS_KEY_ID=$DEV_AWS_ACCESS_KEY_ID;

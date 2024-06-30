@@ -8,8 +8,9 @@ from infrastructure.stacks import cognito
 
 company = os.environ.get("COMPANY", "my-test-company")
 
-stack_prefix = "".join(
-    [a.capitalize() for a in re.sub("[-_]+", " ", company).split(" ")]
+stack_prefix = (
+    "".join([a.capitalize() for a in re.sub("[-_]+", " ", company).split(" ")])
+    + os.environ.get("DEVELOPMENT_ENVIRONMENT", "dev1").capitalize()
 )
 
 app = cdk.App()

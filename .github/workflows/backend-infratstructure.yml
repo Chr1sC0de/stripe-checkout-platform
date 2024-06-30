@@ -2,8 +2,8 @@ name: Backend Infrastructure
 on:
   workflow_dispatch:
     inputs:
-      environment:
-        default: null
+      development_environment:
+        default: auto
         required: false
         type: string
       region:
@@ -19,7 +19,7 @@ on:
           - synth
           - destroy
 env:
-  DEVELOPMENT_ENVIRONMENT: ${{ inputs.environment || github.ref_name == 'master' && 'dev0' || 'dev1'}}
+  DEVELOPMENT_ENVIRONMENT: ${{ inputs.development_environment }}
   AWS_DEFAULT_REGION: ${{ inputs.region }}
   MODE: ${{ inputs.mode }}
   COMPANY: ${{ vars.COMPANY }}
