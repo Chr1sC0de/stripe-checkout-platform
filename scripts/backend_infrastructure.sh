@@ -32,7 +32,5 @@ fi
 
 echo "INFO: The current cdk version is: $(cdk --version)";
 
-
-. ./scripts/setup_aws_environment_variables.sh
 cd ./backend/infrastructure
 cdk deploy

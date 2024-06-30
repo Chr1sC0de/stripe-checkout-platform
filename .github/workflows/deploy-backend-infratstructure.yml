@@ -5,9 +5,7 @@ on:
       environment:
         default: null
         required: false
-      region:
-        default: ap-southeast-2
-        required: false
+        type: string
 env:
   DEVELOPMENT_ENVIRONMENT: ${{ inputs.environment.default || github.ref_name == 'master' && 'dev0' || 'dev1'}}
   CDK_DEFAULT_REGION: ${{ vars.CDK_DEFAULT_REGION }}
