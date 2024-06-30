@@ -27,7 +27,9 @@ jobs:
       - name: Check AWS CLI and CDK Version
         run: |
           echo "INFO: the current aws cli version is: $(aws --version)"
-          echo "INFO: the current aws cdk version is: $(cdk --version)"
-      - name: Print python environment
+          echo "INFO: the current aws npm version is: $(npm --version)"
+          npm install -g aws-cdk
+      - name: Ensure Python and CDK installed
         run: |
           echo "INFO: the current working python environment is: $(which python)"
+          echo "INFO: the current aws cdk version is: $(cdk --version)"
