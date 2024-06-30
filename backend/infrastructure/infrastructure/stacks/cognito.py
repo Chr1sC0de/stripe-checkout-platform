@@ -121,10 +121,10 @@ class InfrastructureStack(Stack):
         ):
             assert (
                 check is not None
-            ), f"ERROR: {client_id_environment_variable} is None, please set before attempting to deploy"
+            ), f"ERROR: {check} is None, please set before attempting to deploy"
             assert (
                 check != ""
-            ), f"ERROR: {client_id_environment_variable} is None, please set before attempting to deploy"
+            ), f"ERROR: {check} is empty, please set a valid value before attempting to deploy"
 
         cognito.UserPoolIdentityProviderFacebook(
             self,
