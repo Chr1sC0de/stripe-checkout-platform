@@ -24,7 +24,7 @@ echo "INFO: Finished setting aws and service provider keys";
 echo "INFO: The current aws cli version is: $(aws --version)"
 echo "INFO: The current npm version is: $(npm --version)"
 
-if ![ -x "$(command -v cdk)" ]; then
+if ! [ -x "$(command -v cdk)" ]; then
     echo "INFO: No cdk command, installing";
     npm install -g aws-cdk
     echo "INFO: Finished installing cdk";
