@@ -21,7 +21,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Initialize Python Backend
         run: |
-          ./scripts/initialize_backend_python_environment.sh \
+          . ./scripts/initialize_backend_python_environment.sh \
           echo PATH=$PATH >> $GITHUB_ENV
       - name: Check AWS CLI and CDK Version
         run: |
