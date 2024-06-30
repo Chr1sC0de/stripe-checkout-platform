@@ -11,9 +11,9 @@ export CURRENT_BRANCH="$(git branch --show-current)"
 if [[ $DEVELOPMENT_ENVIRONMENT == auto ]]; then
 
     echo "INFO: Auto seting environment"
-    if [[  $CURRENT_BRANCH == 'release ']]; then
+    if [[ $CURRENT_BRANCH == 'release' ]]; then
         export DEVELOPMENT_ENVIRONMENT='prod'
-    elif [[  $CURRENT_BRANCH == 'master ']]; then
+    elif [[ $CURRENT_BRANCH == 'master' ]]; then
         export DEVELOPMENT_ENVIRONMENT='dev0'
     else
         export DEVELOPMENT_ENVIRONMENT='dev1'
