@@ -54,11 +54,11 @@ cd ./backend/infrastructure
 
 # bootstrap the environment if it has not been run before
 
-export BOOTSTRAP_STACK_NAME="CDKToolkit"
-
 if [[ $MODE != 'synth' ]]; then
 
-    STACK_EXISTS=$(aws cloudformation describe-stacks --stack-name "CDKToolkit" 2>&1)
+    echo "INFO: Checking if Bootstrap exists"
+
+    export STACK_EXISTS=$(aws cloudformation describe-stacks --stack-name "CDKToolkit" 2>&1)
 
     # # Check if the bootstrap stack exists
     if [[ $STACK_EXISTS == *"does not exist"* ]]; then
