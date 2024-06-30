@@ -52,6 +52,35 @@ echo "INFO: The current cdk version is: $(cdk --version)";
 
 cd ./backend/infrastructure;
 
+# bootstrap the environment if it has not been run before
+
+export BOOTSTRAP_STACK_NAME="CDKToolkit"
+
+if [[ $MODE != 'synth']]; then
+
+    # Define the bootstrap stack name (this can vary based on your CDK app configuration)
+    BOOTSTRAP_STACK_NAME="CDKToolkit"
+
+    # Check if the bootstrap stack exists
+    STACK_EXISTS=$(aws cloudformation describe-stacks --stack-name "$BOOTSTRAP_STACK_NAME" 2>&1)
+
+    if echo "$STACK_EXISTS" | grep -q 'does not exist'; then
+        echo "INFO: Bootstrap stack does not exist. Running CDK bootstrap..."
+        cdk bootstrap
+
+        if [ $? -eq 0 ]; then
+            echo "INFO: CDK bootstrap completed successfully."
+        else
+            echo "ERROR: CDK bootstrap failed."
+            exit 1
+        fi
+
+    else
+        echo "INFO: CDK bootstrap stack already exists. Skipping..."
+    fi
+
+fi
+
 if [[ $MODE == "deploy" ]]; then
     echo "INFO: Deploying infrastructure";
     cdk deploy;
