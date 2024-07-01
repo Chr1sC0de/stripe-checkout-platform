@@ -18,14 +18,13 @@ on:
           - deploy
           - synth
           - destroy
+permissions:
+  id-token: write
+  contents: read
 env:
   DEVELOPMENT_ENVIRONMENT: ${{ inputs.development_environment }}
-  AWS_DEFAULT_REGION: ${{ inputs.region }}
   MODE: ${{ inputs.mode }}
   COMPANY: ${{ vars.COMPANY }}
-  DEV_AWS_ACCESS_KEY_ID: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
-  DEV_AWS_SECRET_ACCESS_KEY: ${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}
-  DEV_AWS_SESSION_TOKEN: ${{ secrets.DEV_AWS_SESSION_TOKEN }}
   DEV_FACEBOOK_CLIENT_ID: ${{ secrets.DEV_FACEBOOK_CLIENT_ID }}
   DEV_FACEBOOK_CLIENT_SECRET: ${{ secrets.DEV_FACEBOOK_CLIENT_SECRET }}
 jobs:
@@ -33,6 +32,11 @@ jobs:
     runs-on: ubuntu-20.04
     name: ${{ inputs.mode }}-backend-infrastructure
     steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.DEV_AWS_GITHUB_ACTION_ROLE }}
+          aws-region: ${{ inputs.region }}
       - name: Checkout
         uses: actions/checkout@v4
       - name: Initialize Python Backend
