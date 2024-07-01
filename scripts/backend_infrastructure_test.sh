@@ -9,15 +9,7 @@ cd "$SOURCE_FOLDER/.." || exit
 
 cd ./backend/infrastructure || exit
 
-if ! [ -x "$(command -v cdk)" ]; then
-    echo "INFO: No cdk command, installing"
-    npm install -g aws-cdk
-    echo "INFO: Finished installing cdk"
-fi
-
-cdk synth
-
-pytest .
+python -m pytest
 
 if [[ $? ]]; then
     echo "ERROR: Testing Failed";
