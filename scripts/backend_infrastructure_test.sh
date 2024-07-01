@@ -14,8 +14,8 @@ cd ./backend/infrastructure || exit
 python -m pytest
 
 if [[ $? ]]; then
+    echo "INFO: Testing Passed";
+else
     echo "ERROR: Testing Failed";
     exit 1
-else
-    echo "INFO: Testing Passed";
 fi
