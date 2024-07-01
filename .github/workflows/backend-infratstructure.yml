@@ -23,7 +23,6 @@ permissions:
   contents: read
 env:
   DEVELOPMENT_ENVIRONMENT: ${{ inputs.development_environment }}
-  AWS_DEFAULT_REGION: ${{ inputs.region }}
   MODE: ${{ inputs.mode }}
   COMPANY: ${{ vars.COMPANY }}
   DEV_FACEBOOK_CLIENT_ID: ${{ secrets.DEV_FACEBOOK_CLIENT_ID }}
@@ -36,6 +35,7 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
+          role-to-assume: ${{ secrets.DEV_AWS_GITHUB_ACTION_ROLE }}
           aws-region: ${{ inputs.region }}
       - name: Checkout
         uses: actions/checkout@v4
