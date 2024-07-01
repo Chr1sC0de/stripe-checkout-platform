@@ -40,6 +40,9 @@ jobs:
           . ./scripts/initialize_backend_python_environment.sh
       - name: Set The GitHub Environment
         run: . ./.venv/bin/activate; echo PATH=$PATH >> $GITHUB_ENV
+      - name: Test Infrastructure
+        run: |
+          . ./scripts/backend_infrastructure_test.sh
       - name: Backend Infrastructure
         run: |
           . ./scripts/backend_infrastructure.sh

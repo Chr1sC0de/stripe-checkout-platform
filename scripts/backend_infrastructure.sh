@@ -1,47 +1,15 @@
 #! /bin/bash
 
-if [ -d ~/.aws/config ]; then
+if [[ -d ~/.aws/config ]]; then
     rm ~/.aws/config
 fi
 
-export source_folder=$(dirname -- "${BASH_SOURCE}")
+# shellcheck disable=SC2155
+export source_folder=$(dirname -- "${BASH_SOURCE[0]}")
 
-cd "$source_folder/.."
+cd "$source_folder/.." || exit
 
-echo "INFO: Setting aws and service provider keys"
-
-export CURRENT_BRANCH="$(git branch --show-current)"
-
-if [[ $DEVELOPMENT_ENVIRONMENT == auto ]]; then
-
-    echo "INFO: Auto seting environment"
-    if [[ $CURRENT_BRANCH == 'release' ]]; then
-        export DEVELOPMENT_ENVIRONMENT='prod'
-    elif [[ $CURRENT_BRANCH == 'master' ]]; then
-        export DEVELOPMENT_ENVIRONMENT='dev0'
-    else
-        export DEVELOPMENT_ENVIRONMENT='dev1'
-    fi
-    echo "INFO: Finished auto setting environment: $DEVELOPMENT_ENVIRONMENT"
-
-fi
-
-if [[ $DEVELOPMENT_ENVIRONMENT == dev* ]]; then
-    echo "INFO: Running in development environment: $DEVELOPMENT_ENVIRONMENT"
-    export AWS_ACCESS_KEY_ID=$DEV_AWS_ACCESS_KEY_ID
-    export AWS_SECRET_ACCESS_KEY=$DEV_AWS_SECRET_ACCESS_KEY
-    export AWS_SESSION_TOKEN=$DEV_AWS_SESSION_TOKEN
-    export FACEBOOK_CLIENT_ID=$DEV_FACEBOOK_CLIENT_ID
-    export FACEBOOK_CLIENT_SECRET=$DEV_FACEBOOK_CLIENT_SECRET
-elif [[ $DEVELOPMENT_ENVIRONMENT == prod ]]; then
-    echo 'ERROR: Production Environment Not Implemented'
-    exit 1
-else
-    echo "ERROR: Invalid Environment $DEVELOPMENT_ENVIRONMENT"
-    exit 1
-fi
-
-echo "INFO: Finished setting aws and service provider keys"
+. "$source_folder/backend_infrastructure_set_env.sh"
 
 echo "INFO: The current aws cli version is: $(aws --version)"
 echo "INFO: The current npm version is: $(npm --version)"
@@ -54,7 +22,7 @@ fi
 
 echo "INFO: The current cdk version is: $(cdk --version)"
 
-cd ./backend/infrastructure
+cd ./backend/infrastructure || exit
 
 # bootstrap the environment if it has not been run before
 
@@ -62,6 +30,7 @@ if [[ $MODE != 'synth' ]]; then
 
     echo "INFO: Checking if Bootstrap exists"
 
+    # shellcheck disable=SC2155
     export STACK_EXISTS=$(aws cloudformation describe-stacks --stack-name "CDKToolkit" 2>&1)
 
     # # Check if the bootstrap stack exists

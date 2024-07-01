@@ -2,13 +2,14 @@
 
 echo "INFO: Setting up the backend python environment ";
 
-export source_folder=$(dirname -- "${BASH_SOURCE}");
+# shellcheck disable=SC2155
+export source_folder=$(dirname -- "${BASH_SOURCE[0]}");
 
-cd "$source_folder/..";
+cd "$source_folder/.." || exit;
 
 # now create the python virtual environment if it does not exist
 
-if [ -d ".venv" ]; then
+if [[ -d ".venv" ]]; then
     echo "INFO: .venv folder already exists, not creating";
 else
     echo "INFO: .venv does not exist, creating";
@@ -28,7 +29,7 @@ python -m pip install ruff;
 echo "INFO: Finished installing pdm and ruff";
 
 echo "INFO: Installing infrastructure requirements"
-cd ./backend/infrastructure;
+cd ./backend/infrastructure || exit;
 python -m pip install -r requirements.txt
 python -m pip install -r requirements-dev.txt
 echo "INFO: Finished installing infrastructure requirements"
