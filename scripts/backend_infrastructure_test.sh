@@ -5,7 +5,7 @@ echo "INFO: Testing Infrastructure"
 # shellcheck disable=SC2155
 export SOURCE_FOLDER="$(dirname -- "${BASH_SOURCE[0]}")"
 
-. "$SOURCE_FOLDER/backend_infrastructure_set_environment_variables.sh"
+. "$SOURCE_FOLDER/backend_infrastructure_set_env.sh"
 
 cd "$SOURCE_FOLDER/.." || exit
 
