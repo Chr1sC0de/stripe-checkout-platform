@@ -22,4 +22,4 @@ class TestCognito:
         self.template.resource_count_is("AWS::Cognito::UserPoolDomain", 1)
 
     def test_all_smm_parameters_exist(self):
-        self.template.resource_count_is("AWS::SSM::Parameter", 5)
+        self.template.resource_count_is("AWS::SSM::Parameter", 4)

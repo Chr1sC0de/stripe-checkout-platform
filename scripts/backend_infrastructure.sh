@@ -1,12 +1,13 @@
 #! /bin/bash
 
-if [ -d ~/.aws/config ]; then
+if [[ -d ~/.aws/config ]]; then
     rm ~/.aws/config
 fi
 
-export source_folder=$(dirname -- "${BASH_SOURCE}")
+# shellcheck disable=SC2155
+export source_folder=$(dirname -- "${BASH_SOURCE[0]}")
 
-cd "$source_folder/.."
+cd "$source_folder/.." || exit
 
 echo "INFO: Setting aws and service provider keys"
 
