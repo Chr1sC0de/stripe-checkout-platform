@@ -30,7 +30,7 @@ class InfrastructureStack(Stack):
         for provider in identity_providers:
             self.create_identity_provider(provider, user_pool)
 
-        # ------------ add a cognito domaint to handle the authentication ------------ #
+        # ------------ add a cognito domain to handle the authentication ------------ #
 
         cognito_domain_prefix = f"{utils.COMPANY}-{utils.ENVIRONMENT}-users"
 
