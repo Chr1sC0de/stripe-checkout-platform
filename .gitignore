@@ -157,6 +157,7 @@ cython_debug/
 # trust policy
 
 role-trust-policy.json
+role-permissions-policy.json
 create-role.log
 
 # PyCharm
