@@ -1,5 +1,19 @@
 #! /bin/bash
 
+if ! [[ $(uv --help) ]];
+then
+    # to make things faster we can cache this installation
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+    source $HOME/.cargo/env
+fi
+
+if ! [[ $(rye help ) ]];
+then
+    # to make things faster we can cache this installation
+    curl -sSf https://rye.astral.sh/get | RYE_INSTALL_OPTION="--yes" bash
+    source "$HOME/.rye/env"
+fi
+
 echo "INFO: Setting up the backend python environment ";
 
 # shellcheck disable=SC2155
@@ -13,7 +27,7 @@ if [[ -d ".venv" ]]; then
     echo "INFO: .venv folder already exists, not creating";
 else
     echo "INFO: .venv does not exist, creating";
-    python -m venv .venv;
+    uv venv;
     echo "INFO: Finished creating .venv";
 fi;
 
@@ -23,15 +37,14 @@ echo "INFO: Activating .venv";
 . .venv/bin/activate;
 echo "INFO: Finisehd activating .venv";
 
-echo "INFO: Installing pdm and ruff";
-python -m pip install pdm;
-python -m pip install ruff;
+echo "INFO: and ruff";
+uv pip install ruff;
 echo "INFO: Finished installing pdm and ruff";
 
 echo "INFO: Installing infrastructure requirements"
 cd ./backend/infrastructure || exit;
-python -m pip install -r requirements.txt
-python -m pip install -r requirements-dev.txt
+uv pip install -r requirements.txt
+uv pip install -r requirements-dev.txt
 echo "INFO: Finished installing infrastructure requirements"
 
 echo "INFO: Finished setting up the backend python environment ";
