@@ -1,5 +1,7 @@
 #! /bin/bash
 
+# ----------------------------- setup rye and uv ----------------------------- #
+
 if ! [[ $(uv --help) ]]; then
     # to make things faster we can cache this installation at a later date
     curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -12,38 +14,46 @@ if ! [[ $(rye help) ]]; then
     source "$HOME/.rye/env"
 fi
 
-echo "INFO: Setting up the backend python environment "
+echo "INFO: Setting Up the Backend Python Environment "
 
 # shellcheck disable=SC2155
 export source_folder=$(dirname -- "${BASH_SOURCE[0]}")
 
 cd "$source_folder/.." || exit
 
-echo "Setting up Python Environment for Infrastructure"
+echo "INFO: Setting Up Python Environment For Infrastructure"
 
 cd "backend/infrastructure" || exit
 
 if [[ -d ".venv" ]]; then
-    echo "INFO: .venv folder already exists, not creating"
+    echo "INFO: .venv Folder Already Exists, Not Creating"
 else
-    echo "INFO: .venv does not exist, creating"
+    echo "INFO: .venv Does Not Exist, Creating"
     uv venv
-    echo "INFO: Finished creating .venv"
+    echo "INFO: Finished Creating .venv"
 fi
 
 echo "INFO: Activating .venv"
 . .venv/bin/activate
-echo "INFO: Finisehd activating .venv"
+echo "INFO: Finisehd Activating .venv"
 
-echo "INFO: and ruff"
+echo "INFO: Installing Ruff"
 uv pip install ruff
-echo "INFO: Finished installing pdm and ruff"
+echo "INFO: Finished Installing Ruff"
 
-echo "INFO: Installing infrastructure requirements"
+echo "INFO: Installing Infrastructure Requirements"
 uv pip install -r requirements.txt
 uv pip install -r requirements-dev.txt
-echo "INFO: Finished installing infrastructure requirements"
+echo "INFO: Finished installing Infrastructure Requirements"
 
-echo "Finished Setting up Python Environment for Infrastructure"
+echo "INFO: Finished Setting up Python Environment for Infrastructure"
+
+echo "INFO: Setting up Python Environment for API Library"
+
+cd ../api-lib || exit
+
+rye sync
+
+echo "INFO: Finished up Python Environment for API Library"
 
 echo "INFO: Finished setting up the backend python environment "
