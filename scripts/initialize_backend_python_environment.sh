@@ -4,12 +4,13 @@ if ! [[ $(uv --help) ]];
 then
     # to make things faster we can cache this installation
     curl -LsSf https://astral.sh/uv/install.sh | sh
+    source $HOME/.cargo/env
 fi
 
 if ! [[ $(rye help ) ]];
 then
     # to make things faster we can cache this installation
-    curl -sSf https://rye.astral.sh/get | bash
+    curl -sSf https://rye.astral.sh/get | RYE_INSTALL_OPTION="--yes" bash
     source "$HOME/.rye/env"
 fi
 
