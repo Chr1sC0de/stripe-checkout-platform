@@ -5,7 +5,9 @@ description = "Add your description here"
 authors = [
     { name = "Chris Mamon", email = "chrisam1993@gmail.com" }
 ]
-dependencies = []
+dependencies = [
+    "ruff>=0.5.0",
+]
 readme = "README.md"
 requires-python = ">= 3.8"
 
