@@ -24,6 +24,8 @@ echo "INFO: The current cdk version is: $(cdk --version)"
 
 cd ./backend/infrastructure || exit
 
+. .venv/bin/activate
+
 # bootstrap the environment if it has not been run before
 
 if [[ $MODE != 'synth' ]]; then

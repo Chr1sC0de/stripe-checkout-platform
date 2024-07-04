@@ -11,11 +11,13 @@ cd "$SOURCE_FOLDER/.." || exit
 
 cd ./backend/infrastructure || exit
 
+. .venv/bin/activate
+
 python -m pytest
 
 if [[ $? ]]; then
-    echo "INFO: Testing Passed";
+    echo "INFO: Testing Passed"
 else
-    echo "ERROR: Testing Failed";
+    echo "ERROR: Testing Failed"
     exit 1
 fi
