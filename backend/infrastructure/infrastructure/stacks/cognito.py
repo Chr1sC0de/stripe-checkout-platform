@@ -32,7 +32,7 @@ class InfrastructureStack(Stack):
 
         # ------------ add a cognito domain to handle the authentication ------------ #
 
-        cognito_domain_prefix = f"{utils.COMPANY}-{utils.ENVIRONMENT}-users"
+        cognito_domain_prefix = f"{utils.COMPANY}-{utils.RUNTIME_ENVIRONMENT}-users"
 
         user_pool.add_domain(
             "cognito_domain",
@@ -48,35 +48,35 @@ class InfrastructureStack(Stack):
         ssm.StringParameter(
             self,
             "ssm_user_pool_provider_url",
-            parameter_name=f"/{utils.COMPANY}/{utils.ENVIRONMENT}/user-pool-provider-url",
+            parameter_name=f"/{utils.COMPANY}/{utils.RUNTIME_ENVIRONMENT}/user-pool-provider-url",
             string_value=user_pool.user_pool_provider_url,
         )
 
         ssm.StringParameter(
             self,
             "ssm_cognito_domain_url",
-            parameter_name=f"/{utils.COMPANY}/{utils.ENVIRONMENT}/user-pool-cognito-domain-url",
+            parameter_name=f"/{utils.COMPANY}/{utils.RUNTIME_ENVIRONMENT}/user-pool-cognito-domain-url",
             string_value=f"https://{cognito_domain_prefix}.auth.{self.region}.amazoncognito.com",
         )
 
         ssm.StringParameter(
             self,
             "ssm_user_pool_id",
-            parameter_name=f"/{utils.COMPANY}/{utils.ENVIRONMENT}/user-pool-id",
+            parameter_name=f"/{utils.COMPANY}/{utils.RUNTIME_ENVIRONMENT}/user-pool-id",
             string_value=user_pool.user_pool_id,
         )
 
         ssm.StringParameter(
             self,
             "ssm_user_pool_client_id",
-            parameter_name=f"/{utils.COMPANY}/{utils.ENVIRONMENT}/user-pool-client-id",
+            parameter_name=f"/{utils.COMPANY}/{utils.RUNTIME_ENVIRONMENT}/user-pool-client-id",
             string_value=user_pool_client.user_pool_client_id,
         )
 
         ssm.StringParameter(
             self,
             "ssm_user_pool_token_signing_key",
-            parameter_name=f"/{utils.COMPANY}/{utils.ENVIRONMENT}/user-pool-signing-key",
+            parameter_name=f"/{utils.COMPANY}/{utils.RUNTIME_ENVIRONMENT}/user-pool-signing-key",
             string_value=f"https://cognito-idp.{self.region}.amazonaws.com/{user_pool.user_pool_id}/.well-known/jwks.json",
         )
 
@@ -87,7 +87,7 @@ class InfrastructureStack(Stack):
         if api_url is not None:
             callback_urls.append(f"{api_url}oauth2/token/callback")
 
-        if utils.ENVIRONMENT.startswith("dev"):
+        if utils.RUNTIME_ENVIRONMENT.startswith("dev"):
             callback_urls.extend(
                 [
                     r"https://0.0.0.0:8000/oauth2/token/callback",
@@ -97,7 +97,7 @@ class InfrastructureStack(Stack):
 
         return user_pool.add_client(
             "user_pool_integration_client",
-            user_pool_client_name=f"{utils.COMPANY}-{utils.ENVIRONMENT}-client-pool",
+            user_pool_client_name=f"{utils.COMPANY}-{utils.RUNTIME_ENVIRONMENT}-client-pool",
             auth_flows=cognito.AuthFlow(user_password=True),
             o_auth=cognito.OAuthSettings(callback_urls=callback_urls),
             read_attributes=cognito.ClientAttributes()
@@ -142,7 +142,7 @@ class InfrastructureStack(Stack):
         return cognito.UserPool(
             self,
             "user_pool",
-            user_pool_name=f"{utils.COMPANY}-{utils.ENVIRONMENT}-user-pool",
+            user_pool_name=f"{utils.COMPANY}-{utils.RUNTIME_ENVIRONMENT}-user-pool",
             account_recovery=cognito.AccountRecovery.PHONE_WITHOUT_MFA_AND_EMAIL,
             advanced_security_mode=None,
             auto_verify=cognito.AutoVerifiedAttrs(email=True, phone=False),
