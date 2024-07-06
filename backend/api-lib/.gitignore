@@ -1,3 +1,6 @@
+.*
+!.gitignore
+
 # python generated files
 __pycache__/
 *.py[oc]
@@ -8,3 +11,6 @@ wheels/
 
 # venv
 .venv
+
+# ssl local keys
+*.pem
