@@ -6,7 +6,7 @@ import re
 import aws_cdk as cdk
 from infrastructure.stacks import cognito
 
-company = os.environ.get("COMPANY", "my-test-company")
+company = os.environ.get("COMPANY", "my-test-company-name")
 
 stack_prefix = (
     "".join([a.capitalize() for a in re.sub("[-_]+", " ", company).split(" ")])
