@@ -66,6 +66,8 @@ jinja2==3.1.4
 jmespath==1.0.1
     # via boto3
     # via botocore
+jose==1.0.0
+    # via api-lib
 markdown-it-py==3.0.0
     # via rich
 markupsafe==2.1.5
