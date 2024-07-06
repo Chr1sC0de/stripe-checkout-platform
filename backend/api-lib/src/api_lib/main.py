@@ -11,8 +11,8 @@ app = FastAPI()
 async def root() -> JSONResponse:
     return JSONResponse(
         content={
-            "RUNTIME_LOCATION": utils.RUNTIME_ENVIRONMENT,
-            "RUNTIME_ENVIRONMENT": utils.RUNTIME_LOCATION,
+            "DEVELOPMENT_LOCATION": utils.DEVELOPMENT_LOCATION,
+            "DEVELOPMENT_ENVIRONMENT": utils.DEVELOPMENT_ENVIRONMENT,
         }
     )
 
