@@ -91,6 +91,10 @@ class InfrastructureStack(Stack):
             callback_urls.extend(
                 [
                     r"https://0.0.0.0:8000/oauth2/token/callback",
+                    r"https://0.0.0.0:8000/docs",
+                    r"https://0.0.0.0:3000/oauth2/token/callback",
+                    r"https://0.0.0.0:3000/login-success",
+                    r"https://0.0.0.0:3000/",
                     r"https://www.example.com",
                 ]
             )
