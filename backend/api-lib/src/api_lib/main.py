@@ -1,8 +1,7 @@
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
-from api_lib import utils
-from api_lib import oauth2
+from api_lib import oauth2, utils
 
 app = FastAPI()
 

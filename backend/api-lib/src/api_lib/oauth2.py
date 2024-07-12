@@ -1,10 +1,10 @@
 import time
-from typing import Literal, Optional
+from typing import Literal, Optional, Annotated, Dict
 
 import requests
-from fastapi import HTTPException
+from fastapi import HTTPException, Depends, Form
 from fastapi.requests import Request
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, JSONResponse
 from fastapi.routing import APIRouter
 from fastapi.security import OAuth2AuthorizationCodeBearer
 from pydantic import BaseModel
@@ -26,38 +26,26 @@ client_id = utils.get_ssm_parameter_value(
     utils.SSMParameterName.USER_POOL_CLIENT_ID.value
 )
 
-oauth2_scheme = OAuth2AuthorizationCodeBearer(
-    authorizationUrl="/oauth2/authorize",
-    tokenUrl="/oauth2/token/callback",
-)
-
+api_url = None
 
 token_redirect_uri = (
-    "https://0.0.0.0:8000/oauth2/token/callback"
-    # if utils.RUNTIME_LOCATION == "local"
-    # else f"{api_url}oauth2/token/callback"
+    "https://0.0.0.0:8000/docs"
+    if utils.DEVELOPMENT_LOCATION == "local"
+    else f"{api_url}docs"
+)
+
+oauth2_scheme = OAuth2AuthorizationCodeBearer(
+    authorizationUrl="/oauth2/authorize",
+    tokenUrl="/oauth2/token",
 )
 
 
-class Token(BaseModel):
+class TokenResponse(BaseModel):
     id_token: str
     access_token: str
     refresh_token: str
     expires_in: int
     token_type: str
-
-
-@router.get("/authorize")
-async def authorize(
-    redirect_uri: Optional[str] = None,
-    identity_provider: Optional[
-        Literal["Facebook", "Google", "LoginWithAmazon", "SignInWithApple"]
-    ] = None,
-):
-    url = f"{cognito_authorize_url}?response_type=code&client_id={client_id}&redirect_uri={token_redirect_uri if redirect_uri is None else redirect_uri}"
-    if identity_provider is not None:
-        url += f"&identity_provider={identity_provider}"
-    return RedirectResponse(url=url)
 
 
 @router.post("/revoke")
@@ -70,22 +58,32 @@ async def revoke(token: str):
     return response.text
 
 
-oaut2_callback_url = "/token/callback"
+@router.get("/authorize")
+async def authorize(
+    request: Request,
+    state: Optional[str] = None,
+    redirect_uri: Optional[str] = None,
+    identity_provider: Optional[
+        Literal["Facebook", "Google", "LoginWithAmazon", "SignInWithApple"]
+    ] = None,
+):
+    url = f"{cognito_authorize_url}?response_type=code&client_id={client_id}&redirect_uri={token_redirect_uri if redirect_uri is None else redirect_uri}"
+    if identity_provider is not None:
+        url += f"&identity_provider={identity_provider}"
+    if state is not None:
+        url += f"&state={state}"
+    return RedirectResponse(url=url)
 
 
-@router.get(oaut2_callback_url)
-async def token(request: Request) -> Token:
-    code = request.query_params.get("code")
-
+@router.post("/token")
+async def token_authorization_code(
+    grant_type: Annotated[Literal["authorization_code", "refresh_token"], Form()],
+    redirect_uri: Optional[str] = Form(None),
+    refresh_token: Optional[str] = Form(None),
+    code: Optional[str] = Form(None),
+) -> TokenResponse:
     if not code:
         return HTTPException(status_code=400, detail="Invalid callback request")
-
-    data = {
-        "code": code,
-        "grant_type": "authorization_code",
-        "client_id": client_id,
-        "redirect_uri": token_redirect_uri,
-    }
 
     headers = {"Content-Type": "application/x-www-form-urlencoded"}
 
@@ -93,10 +91,24 @@ async def token(request: Request) -> Token:
     retries = 0
 
     while retries < max_retries:
-        response = requests.post(cognito_token_url, data=data, headers=headers).json()
+        response = requests.post(
+            cognito_token_url,
+            data={
+                k: v
+                for k, v in {
+                    "grant_type": grant_type,
+                    "code": code,
+                    "client_id": client_id,
+                    "redirect_uri": redirect_uri,
+                    "refresh_token": refresh_token,
+                }.items()
+                if v is not None
+            },
+            headers=headers,
+        ).json()
 
         if "id_token" in response:
-            token_response = Token(**response)
+            token_response = TokenResponse(**response)
             break
 
         time.sleep(2**retries)
@@ -116,3 +128,38 @@ async def token(request: Request) -> Token:
         )
 
     return token_response
+
+
+class TokenValidationResponse(BaseModel):
+    valid: bool
+    description: str
+
+
+@router.post("/validate-token")
+async def validate_token(token: Annotated[str, Depends(oauth2_scheme)]):
+    if not utils.verify_jwt(token):
+        return TokenValidationResponse(valid=False, description="invalid token")
+    return TokenValidationResponse(valid=True, description="valid token")
+
+
+async def validate_bearer(
+    token: Annotated[str, Depends(oauth2_scheme)],
+) -> TokenResponse:
+    if not token:
+        raise HTTPException(
+            status_code=HTTP_401_UNAUTHORIZED,
+            detail="No token provided",
+        )
+
+    if not utils.verify_jwt(token):
+        raise HTTPException(
+            status_code=HTTP_401_UNAUTHORIZED,
+            detail="Invalid token",
+        )
+
+    return token
+
+
+@router.get("/test")
+async def help(token: Annotated[TokenResponse, Depends(validate_bearer)]):
+    return JSONResponse(content={"message": "yeah boi"})
