@@ -1,14 +1,15 @@
 import time
-from typing import Literal, Optional, Annotated, Dict
+from typing import Annotated, Literal, Optional
 
 import requests
-from fastapi import HTTPException, Depends, Form
+from fastapi import Cookie, Depends, Form, HTTPException
+from fastapi.encoders import jsonable_encoder
 from fastapi.requests import Request
-from fastapi.responses import RedirectResponse, JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.routing import APIRouter
 from fastapi.security import OAuth2AuthorizationCodeBearer
 from pydantic import BaseModel
-from starlette.status import HTTP_401_UNAUTHORIZED, HTTP_404_NOT_FOUND
+from starlette.status import HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED
 
 from api_lib import utils
 
@@ -41,11 +42,11 @@ oauth2_scheme = OAuth2AuthorizationCodeBearer(
 
 
 class TokenResponse(BaseModel):
-    id_token: str
-    access_token: str
-    refresh_token: str
-    expires_in: int
-    token_type: str
+    id_token: Optional[str]
+    access_token: Optional[str]
+    refresh_token: Optional[str]
+    expires_in: Optional[int]
+    token_type: Optional[str]
 
 
 @router.post("/revoke")
@@ -76,14 +77,14 @@ async def authorize(
 
 
 @router.post("/token")
-async def token_authorization_code(
+async def token(
     grant_type: Annotated[Literal["authorization_code", "refresh_token"], Form()],
     redirect_uri: Optional[str] = Form(None),
     refresh_token: Optional[str] = Form(None),
     code: Optional[str] = Form(None),
-) -> TokenResponse:
+):
     if not code:
-        return HTTPException(status_code=400, detail="Invalid callback request")
+        raise HTTPException(status_code=400, detail="Invalid callback request")
 
     headers = {"Content-Type": "application/x-www-form-urlencoded"}
 
@@ -91,7 +92,7 @@ async def token_authorization_code(
     retries = 0
 
     while retries < max_retries:
-        response = requests.post(
+        cognito_response = requests.post(
             cognito_token_url,
             data={
                 k: v
@@ -107,8 +108,8 @@ async def token_authorization_code(
             headers=headers,
         ).json()
 
-        if "id_token" in response:
-            token_response = TokenResponse(**response)
+        if "id_token" in cognito_response:
+            token_response = TokenResponse(**cognito_response)
             break
 
         time.sleep(2**retries)
@@ -116,18 +117,23 @@ async def token_authorization_code(
         retries += 1
 
         if retries >= max_retries:
-            return HTTPException(
-                status_code=HTTP_404_NOT_FOUND,
-                detail=response,
+            raise HTTPException(
+                status_code=HTTP_400_BAD_REQUEST,
+                detail=cognito_response,
             )
 
     if not utils.verify_jwt(token_response.access_token):
-        return HTTPException(
+        raise HTTPException(
             status_code=HTTP_401_UNAUTHORIZED,
             detail="Unverified JWT",
         )
+    response = JSONResponse(content=jsonable_encoder(token_response))
 
-    return token_response
+    response.set_cookie(
+        key="access_token", value=token_response.access_token, secure=True
+    )
+
+    return response
 
 
 class TokenValidationResponse(BaseModel):
@@ -142,24 +148,30 @@ async def validate_token(token: Annotated[str, Depends(oauth2_scheme)]):
     return TokenValidationResponse(valid=True, description="valid token")
 
 
+async def cookie_token(
+    access_token: Annotated[str, Depends(oauth2_scheme)] = Cookie(),
+):
+    return access_token
+
+
 async def validate_bearer(
-    token: Annotated[str, Depends(oauth2_scheme)],
+    access_token: Annotated[str, Depends(cookie_token)],
 ) -> TokenResponse:
-    if not token:
+    if not access_token:
         raise HTTPException(
             status_code=HTTP_401_UNAUTHORIZED,
             detail="No token provided",
         )
 
-    if not utils.verify_jwt(token):
+    if not utils.verify_jwt(access_token):
         raise HTTPException(
             status_code=HTTP_401_UNAUTHORIZED,
             detail="Invalid token",
         )
 
-    return token
+    return access_token
 
 
 @router.get("/test")
-async def help(token: Annotated[TokenResponse, Depends(validate_bearer)]):
+async def help(access_token: Annotated[str, Depends(validate_bearer)]):
     return JSONResponse(content={"message": "yeah boi"})
