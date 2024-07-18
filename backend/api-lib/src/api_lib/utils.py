@@ -1,7 +1,7 @@
 import enum
 import os
 import time
-from typing import Dict, List, Literal, Optional, overload
+from typing import Any, Dict, List, Literal, Optional, overload
 
 import boto3
 import requests
@@ -121,3 +121,18 @@ def verify_jwt(token: str) -> bool:
             status_code=HTTP_401_UNAUTHORIZED,
             detail=f"Invalid token, {e}",
         )
+
+
+# ---------------------------------------------------------------------------- #
+#                                 boto3 helpers                                #
+# ---------------------------------------------------------------------------- #
+
+
+def parse_user_attributes(user: dict[str, Any]) -> dict[str, Any]:
+    user_attributes = user["UserAttributes"]
+    output = {}
+    for attribute in user_attributes:
+        key = attribute["Name"]
+        value = attribute["Value"]
+        output[key] = value
+    return output
