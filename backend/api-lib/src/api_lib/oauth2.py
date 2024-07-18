@@ -170,8 +170,3 @@ async def validate_bearer(
         )
 
     return access_token
-
-
-@router.get("/test")
-async def help(access_token: Annotated[str, Depends(validate_bearer)]):
-    return JSONResponse(content={"message": "yeah boi"})
