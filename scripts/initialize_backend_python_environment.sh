@@ -35,7 +35,7 @@ fi
 
 echo "INFO: Activating .venv"
 . .venv/bin/activate
-echo "INFO: Finisehd Activating .venv"
+echo "INFO: Finished Activating .venv"
 
 echo "INFO: Installing Ruff"
 uv pip install ruff
