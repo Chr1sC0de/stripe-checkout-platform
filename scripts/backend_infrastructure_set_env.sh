@@ -1,3 +1,5 @@
+#! /bin/bash
+
 echo "INFO: Setting aws and service provider keys"
 
 # shellcheck disable=SC2155
