@@ -92,6 +92,7 @@ orjson==3.10.6
     # via fastapi
 packaging==24.1
     # via pytest
+pip==24.1.2
 pluggy==1.5.0
     # via pytest
 pyasn1==0.6.0
