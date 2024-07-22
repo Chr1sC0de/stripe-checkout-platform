@@ -48,6 +48,8 @@ echo "INFO: Finished installing Infrastructure Requirements"
 
 echo "INFO: Finished Setting up Python Environment for Infrastructure"
 
+deactivate
+
 echo "INFO: Setting up Python Environment for API Library"
 
 cd ../api-lib || exit
