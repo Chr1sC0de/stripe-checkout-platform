@@ -16,7 +16,7 @@
             "type": "debugpy",
             "request": "launch",
             "module": "uvicorn",
-            "justMyCode": true,
+            "justMyCode": false,
             "args": [
                 "api_lib.main:app",
                 "--host",

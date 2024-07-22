@@ -2,12 +2,12 @@ import time
 from typing import Annotated, Literal, Optional
 
 import requests
-from fastapi import Cookie, Depends, Form, HTTPException
-from fastapi.encoders import jsonable_encoder
+from fastapi import Cookie, Depends, Form, HTTPException, Response
 from fastapi.requests import Request
-from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.responses import RedirectResponse
 from fastapi.routing import APIRouter
 from fastapi.security import OAuth2AuthorizationCodeBearer
+from fastapi.security.utils import get_authorization_scheme_param
 from pydantic import BaseModel
 from starlette.status import HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED
 
@@ -35,7 +35,24 @@ token_redirect_uri = (
     else f"{api_url}docs"
 )
 
-oauth2_scheme = OAuth2AuthorizationCodeBearer(
+
+class OAuth2AuthorizationCodeBearerWithCookie(OAuth2AuthorizationCodeBearer):
+    async def __call__(self, request: Request) -> Optional[str]:
+        authorization = request.cookies.get("Authorization")
+        scheme, param = get_authorization_scheme_param(authorization)
+        if not authorization or scheme.lower() != "bearer":
+            if self.auto_error:
+                raise HTTPException(
+                    status_code=HTTP_401_UNAUTHORIZED,
+                    detail="Not authenticated",
+                    headers={"WWW-Authenticate": "Bearer"},
+                )
+            else:
+                return None  # pragma: nocover
+        return param
+
+
+oauth2_scheme = OAuth2AuthorizationCodeBearerWithCookie(
     authorizationUrl="/oauth2/authorize",
     tokenUrl="/oauth2/token",
 )
@@ -67,7 +84,7 @@ async def authorize(
     identity_provider: Optional[
         Literal["Facebook", "Google", "LoginWithAmazon", "SignInWithApple"]
     ] = None,
-):
+) -> RedirectResponse:
     url = f"{cognito_authorize_url}?response_type=code&client_id={client_id}&redirect_uri={token_redirect_uri if redirect_uri is None else redirect_uri}"
     if identity_provider is not None:
         url += f"&identity_provider={identity_provider}"
@@ -78,11 +95,12 @@ async def authorize(
 
 @router.post("/token")
 async def token(
+    response: Response,
     grant_type: Annotated[Literal["authorization_code", "refresh_token"], Form()],
     redirect_uri: Optional[str] = Form(None),
     refresh_token: Optional[str] = Form(None),
     code: Optional[str] = Form(None),
-):
+) -> TokenResponse:
     if not code:
         raise HTTPException(status_code=400, detail="Invalid callback request")
 
@@ -127,25 +145,17 @@ async def token(
             status_code=HTTP_401_UNAUTHORIZED,
             detail="Unverified JWT",
         )
-    response = JSONResponse(content=jsonable_encoder(token_response))
 
     response.set_cookie(
-        key="access_token", value=token_response.access_token, secure=True
+        key="Authorization", value=f"Bearer {token_response.access_token}", secure=True
     )
 
-    return response
+    return token_response
 
 
 class TokenValidationResponse(BaseModel):
     valid: bool
     description: str
-
-
-@router.post("/validate-token")
-async def validate_token(token: Annotated[str, Depends(oauth2_scheme)]):
-    if not utils.verify_jwt(token):
-        return TokenValidationResponse(valid=False, description="invalid token")
-    return TokenValidationResponse(valid=True, description="valid token")
 
 
 async def cookie_token(

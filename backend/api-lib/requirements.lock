@@ -110,6 +110,7 @@ pyyaml==6.0.1
     # via uvicorn
 requests==2.32.3
     # via api-lib
+    # via stripe
 rich==13.7.1
     # via typer
 rsa==4.9
@@ -126,6 +127,8 @@ sniffio==1.3.1
     # via httpx
 starlette==0.37.2
     # via fastapi
+stripe==10.3.0
+    # via api-lib
 typer==0.12.3
     # via fastapi-cli
 types-awscrt==0.21.0
@@ -142,6 +145,7 @@ typing-extensions==4.12.2
     # via mypy-boto3-ssm
     # via pydantic
     # via pydantic-core
+    # via stripe
     # via typer
     # via uvicorn
 ujson==5.10.0
