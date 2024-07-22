@@ -1,11 +1,9 @@
 "use client"
-import { exec } from "child_process"
-import { error } from "console"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef } from "react"
 import React from "react"
 
 const endpointURL = "https://0.0.0.0:8000"
-const redirectURI = "https://0.0.0.0:3000"
+const baseURL = "https://0.0.0.0:3000"
 
 const getJWTToken = async (code: string): Promise<string> => {
     try {
@@ -15,7 +13,7 @@ const getJWTToken = async (code: string): Promise<string> => {
             body: new URLSearchParams({
                 "grant_type": 'authorization_code',
                 "code": code,
-                "redirect_uri": redirectURI
+                "redirect_uri": baseURL
             }),
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -29,7 +27,7 @@ const getJWTToken = async (code: string): Promise<string> => {
         return data.access_token;
     } catch (error) {
         console.error((error as Error).message);
-        return ""
+        return "";
     }
 }
 
@@ -40,10 +38,7 @@ interface LoginButtonProps {
 }
 
 const LoginButton: React.FC<LoginButtonProps> = ({ provider, className }) => {
-    const [token, setToken] = useState("")
-    const [message, setMessage] = useState("")
     const effectRan = useRef(false);
-    const renderCount = useRef(0);
 
     useEffect(() => {
 
@@ -51,45 +46,38 @@ const LoginButton: React.FC<LoginButtonProps> = ({ provider, className }) => {
             const query = new URLSearchParams(window.location.search);
             const code = query.get('code');
             if (code) {
-                const _jwtToken = await getJWTToken(code);
-                setToken(_jwtToken);
-
-                // Clear the code from the URL
-                const newUrl = new URL(window.location.href);
-                newUrl.searchParams.delete('code');
-                window.history.replaceState({}, document.title, newUrl.toString());
+                const token = await getJWTToken(code);
+                if (token) {
+                    // Clear the code from the URL
+                    const newUrl = new URL(window.location.href);
+                    newUrl.searchParams.delete('code');
+                    window.history.replaceState({}, document.title, newUrl.toString());
+                    window.location.href = `${baseURL}/home`;
+                }
             }
         }
-        const fetchMessage = async () => {
-            const yehBoi = await getYeahBoi()
-            setMessage(yehBoi)
-        }
+
         if (!effectRan.current) {
-            effectRan.current = true
+            effectRan.current = true;
             fetchToken();
-            fetchMessage();
-            renderCount.current += 1;
         }
     }, []);
-
 
     const handleState = () => {
         const searchParams = new URLSearchParams({
             identity_provider: `${provider}`,
-            redirect_uri: redirectURI
+            redirect_uri: baseURL
         });
         window.location.href = `${endpointURL}/oauth2/authorize?${searchParams.toString()}`;
     }
 
     return (
         <div className="mt-4">
-            {!token ?
-                <button
-                    className={className}
-                    onClick={handleState}
-                >{provider} SSO
-                </button> : <p>{message}</p>
-            }
+            <button
+                className={className}
+                onClick={handleState}
+            >{provider} SSO
+            </button>
         </div>
     )
 }
