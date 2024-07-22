@@ -1,6 +1,6 @@
 #! /bin/bash
 : '
-Create the openid connection required to allow github to perform code actions 
+Create the openid connection required to allow github to perform code actions
 '
 
 # shellcheck disable=SC2155
