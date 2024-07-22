@@ -1,3 +1,9 @@
+#! /bin/bash
+: '
+This script is used to create the local ssl certificates required to
+run the fastapi locally using https
+'
+
 openssl \
     req \
     -x509 \
