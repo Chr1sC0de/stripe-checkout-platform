@@ -18,3 +18,5 @@ A template for a checkout platform
 ## Setup OIDC for Github Actions AWS Credentials
 
 OIDC for AWS Github Actions can be configured through the following [Documentation](https://mahendranp.medium.com/configure-github-openid-connect-oidc-provider-in-aws-b7af1bca97dd).
+There is an automation [Script](scripts/setup_openid_connect.sh) to help automate the setup of the sysadmin role.
+
