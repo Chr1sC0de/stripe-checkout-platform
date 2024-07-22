@@ -1,4 +1,7 @@
 #! /bin/bash
+: '
+Create the openid connection required to allow github to perform code actions 
+'
 
 # shellcheck disable=SC2155
 export source_folder=$(dirname -- "${BASH_SOURCE[0]}")
@@ -90,7 +93,7 @@ aws iam attach-role-policy \
     --role-name $role_name \
     --policy-arn arn:aws:iam::aws:policy/job-function/SystemAdministrator
 
-# attach the
+# attach the cdk policy
 
 aws iam put-role-policy \
     --role-name $role_name \
