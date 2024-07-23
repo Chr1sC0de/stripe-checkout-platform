@@ -4,6 +4,11 @@ create a zip for the api library, this should be run after
     /scripts/initialize_backend_python_environment.sh
 '
 
+if [[ -n $GITHUB_ACTIONS ]]; then
+    source $HOME/.cargo/env
+    source "$HOME/.rye/env"
+fi
+
 # shellcheck disable=SC2155
 export source_folder=$(dirname -- "${BASH_SOURCE[0]}")
 
@@ -15,15 +20,18 @@ rye sync
 
 python -m pip install . -t lib
 
-if [ -d dist ];
-    then rm -rf dist
-fi;
+if [ -d dist ]; then
+    rm -rf dist
+fi
 
-mkdir dist;
+mkdir dist
 
-(cd lib || exit; zip ../dist/lambda.zip -r .);
+(
+    cd lib || exit
+    zip ../dist/lambda.zip -r .
+)
 
-zip dist/lambda.zip -u api.py;
+zip dist/lambda.zip -u api.py
 
 chmod 775 dist/lambda.zip
 
