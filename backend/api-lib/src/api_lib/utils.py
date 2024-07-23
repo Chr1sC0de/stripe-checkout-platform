@@ -34,6 +34,11 @@ class SSMParameterName(enum.Enum):
     SSM_COGNITO_DOMAIN_URL = (
         f"/{COMPANY}/{DEVELOPMENT_ENVIRONMENT}/user-pool-cognito-domain-url"
     )
+    SSM_API_FUNCTION_URL = f"/{COMPANY}/{DEVELOPMENT_ENVIRONMENT}/api-function-url"
+    SSM_STRIPE_SECRET_KEY = f"/{COMPANY}/{DEVELOPMENT_ENVIRONMENT}/stripe-secret-key"
+    SSM_STRIPE_WEBHOOK_SECRET = (
+        f"/{COMPANY}/{DEVELOPMENT_ENVIRONMENT}/stripe-webhook-secret"
+    )
 
     def __str__(self):
         return self.value

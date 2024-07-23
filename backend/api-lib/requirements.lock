@@ -71,6 +71,8 @@ jinja2==3.1.4
 jmespath==1.0.1
     # via boto3
     # via botocore
+mangum==0.17.0
+    # via api-lib
 markdown-it-py==3.0.0
     # via rich
 markupsafe==2.1.5
@@ -139,6 +141,7 @@ typing-extensions==4.12.2
     # via anyio
     # via boto3-stubs
     # via fastapi
+    # via mangum
     # via mypy-boto3
     # via mypy-boto3-cognito-idp
     # via mypy-boto3-dynamodb

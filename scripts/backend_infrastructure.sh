@@ -56,7 +56,7 @@ fi
 
 if [[ $MODE == "deploy" ]]; then
     echo "INFO: Deploying infrastructure"
-    cdk deploy
+    cdk deploy --all
     echo "INFO: Finished deploying infrastructure"
 elif [[ $MODE == "synth" ]]; then
     echo "INFO: Synthesizing infrastructure"

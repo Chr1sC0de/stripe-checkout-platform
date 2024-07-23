@@ -23,8 +23,6 @@ mkdir dist;
 
 (cd lib || exit; zip ../dist/lambda.zip -r .);
 
-cp ../api.py .
-
 zip dist/lambda.zip -u api.py;
 
 chmod 775 dist/lambda.zip
