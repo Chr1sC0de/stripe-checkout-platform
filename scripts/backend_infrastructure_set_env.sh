@@ -23,6 +23,8 @@ if [[ $DEVELOPMENT_ENVIRONMENT == dev* ]]; then
     echo "INFO: Running in development environment: $DEVELOPMENT_ENVIRONMENT"
     export FACEBOOK_CLIENT_ID=$DEV_FACEBOOK_CLIENT_ID
     export FACEBOOK_CLIENT_SECRET=$DEV_FACEBOOK_CLIENT_SECRET
+    export STRIPE_SECRET_KEY=$DEV_STRIPE_SECRET_KEY
+    export STRIPE_WEBHOOK_SECRET=$DEV_STRIPE_WEBHOOK_SECRET
 elif [[ $DEVELOPMENT_ENVIRONMENT == prod ]]; then
     echo 'ERROR: Production Environment Not Implemented'
     exit 1
