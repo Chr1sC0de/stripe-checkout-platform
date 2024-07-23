@@ -85,7 +85,13 @@ class InfrastructureStack(Stack):
     ) -> cognito.UserPoolClient:
         callback_urls = []
         if api_url is not None:
-            callback_urls.append(f"{api_url}oauth2/token")
+            callback_urls.extend(
+                [
+                    f"{api_url}docs",
+                    f"{api_url}docs/oauth2-redirect",
+                    f"{api_url}oauth2/token",
+                ]
+            )
 
         if utils.DEVELOPMENT_ENVIRONMENT.startswith("dev"):
             callback_urls.extend(
