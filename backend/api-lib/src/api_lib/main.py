@@ -2,7 +2,8 @@ from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from api_lib import oauth2, user, utils
+from api_lib import oauth2, user, utils, stripe
+
 
 app = FastAPI()
 
@@ -33,3 +34,4 @@ app.include_router(oauth2.router, prefix="/oauth2")
 app.include_router(
     user.router, prefix="/user", dependencies=[Depends(oauth2.validate_bearer)]
 )
+app.include_router(stripe.router, prefix="/stripe")
