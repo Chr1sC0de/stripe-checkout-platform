@@ -27,6 +27,8 @@ env:
   COMPANY: ${{ vars.COMPANY }}
   DEV_FACEBOOK_CLIENT_ID: ${{ secrets.DEV_FACEBOOK_CLIENT_ID }}
   DEV_FACEBOOK_CLIENT_SECRET: ${{ secrets.DEV_FACEBOOK_CLIENT_SECRET }}
+  DEV_STRIPE_SECRET_KEY: ${{ secrets.DEV_STRIPE_SECRET_KEY }}
+  DEV_STRIPE_WEBHOOK_SECRET: ${{ secrets.DEV_STRIPE_WEBHOOK_SECRET }}
 jobs:
   infrastructure:
     runs-on: ubuntu-20.04
