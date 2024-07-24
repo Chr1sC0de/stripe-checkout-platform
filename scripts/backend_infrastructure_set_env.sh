@@ -25,6 +25,11 @@ if [[ $DEVELOPMENT_ENVIRONMENT == dev* ]]; then
     export FACEBOOK_CLIENT_SECRET=$DEV_FACEBOOK_CLIENT_SECRET
     export STRIPE_SECRET_KEY=$DEV_STRIPE_SECRET_KEY
     export STRIPE_WEBHOOK_SECRET=$DEV_STRIPE_WEBHOOK_SECRET
+    echo "INFO: Set the following environment variables:"
+    echo "INFO:     FACEBOOK_CLIENT_ID=${FACEBOOK_CLIENT_ID}"
+    echo "INFO:     FACEBOOK_CLIENT_SECRET=${FACEBOOK_CLIENT_SECRET}"
+    echo "INFO:     STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}"
+    echo "INFO:     STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}"
 elif [[ $DEVELOPMENT_ENVIRONMENT == prod ]]; then
     echo 'ERROR: Production Environment Not Implemented'
     exit 1
