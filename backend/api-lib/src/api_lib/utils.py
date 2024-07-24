@@ -12,6 +12,7 @@ from mypy_boto3_cognito_idp import CognitoIdentityProviderClient
 from mypy_boto3_dynamodb import DynamoDBClient
 from mypy_boto3_ssm import SSMClient
 from starlette.status import HTTP_401_UNAUTHORIZED
+import stripe
 
 COMPANY = os.environ.get("COMPANY", "my-test-company-name")
 
@@ -84,6 +85,12 @@ def get_ssm_parameter_value(parameter_name: SSMParameterName, max_retries=5) -> 
     client.close()
     return None
 
+
+# ---------------------------------------------------------------------------- #
+#                            set the stripe api key                            #
+# ---------------------------------------------------------------------------- #
+
+stripe.api_key = get_ssm_parameter_value(SSMParameterName.SSM_STRIPE_SECRET_KEY.value)
 
 # ---------------------------------------------------------------------------- #
 #                               handle jwt token                               #

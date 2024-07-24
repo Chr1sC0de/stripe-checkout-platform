@@ -37,17 +37,16 @@ async def get_user(
 
     user_details = client.get_user(AccessToken=access_token)
 
-    # TODO
-    # user_attributes = utils.parse_user_attributes(user_details)
+    user_attributes = utils.parse_user_attributes(user_details)
 
-    # if "custom:stripe_customer_id" not in user_attributes:
-    #     stripe_customer_id = stripe.Customer.create()
-    #     client.update_user_attributes(
-    #         AccessToken=access_token,
-    #         UserAttributes=[
-    #             {"Name": "custom:stripe_customer_id", "Value": stripe_customer_id["id"]}
-    #         ],
-    #     )
-    #     user_details = client.get_user(AccessToken=access_token)
+    if "custom:stripe_customer_id" not in user_attributes:
+        stripe_customer_id = stripe.Customer.create()
+        client.update_user_attributes(
+            AccessToken=access_token,
+            UserAttributes=[
+                {"Name": "custom:stripe_customer_id", "Value": stripe_customer_id["id"]}
+            ],
+        )
+        user_details = client.get_user(AccessToken=access_token)
 
     return UserResponse(**user_details)
