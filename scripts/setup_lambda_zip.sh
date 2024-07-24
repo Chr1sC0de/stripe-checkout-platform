@@ -12,7 +12,7 @@ if [[ -n $GITHUB_ACTIONS ]]; then
 fi
 
 # shellcheck disable=SC2155
-export source_folder=$(dirname -- "${BASH_SOURCE[0]}")
+source_folder=$(dirname -- "${BASH_SOURCE[0]}")
 
 cd "$source_folder"/../backend/api-lib || exit
 
@@ -44,7 +44,5 @@ rm -rf lib
 echo "INFO: Finished creating zip"
 
 deactivate
-
-cd $source_folder/.. || exit
 
 echo "INFO: Finished setting up lambda function"
