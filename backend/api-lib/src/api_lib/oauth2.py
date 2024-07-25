@@ -149,7 +149,10 @@ async def token(
         )
 
     response.set_cookie(
-        key="Authorization", value=f"Bearer {token_response.access_token}", secure=True
+        key="Authorization",
+        value=f"Bearer {token_response.access_token}",
+        secure=True,
+        samesite="none",
     )
 
     return token_response
