@@ -22,7 +22,7 @@ def create_table_from_stripe_object(stack: Stack, table_name: str):
         partition_key=dynamodb.Attribute(name="id", type=dynamodb.AttributeType.STRING),
         contributor_insights=True,
         removal_policy=(
-            RemovalPolicy.DESTROY if utils.DEVELOPMENT_ENVIRONMENT == "dev" else None
+            RemovalPolicy.DESTROY if "dev" in utils.DEVELOPMENT_ENVIRONMENT else None
         ),
     )
     return table
