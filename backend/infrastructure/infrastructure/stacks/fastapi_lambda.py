@@ -2,14 +2,15 @@ import os
 
 from aws_cdk import (
     CfnOutput,
+    RemovalPolicy,
     Stack,
 )
+from aws_cdk import aws_dynamodb as dynamodb
 from aws_cdk import aws_iam as iam
 from aws_cdk import aws_lambda as L
 from aws_cdk import aws_ssm as ssm
-from aws_cdk import aws_dynamodb as dynamodb
-from aws_cdk import RemovalPolicy
 from constructs import Construct
+
 from infrastructure import utils
 
 
@@ -53,6 +54,7 @@ class InfrastructureStack(Stack):
         for table_name in (
             "product",
             "price",
+            "customer",
             "checkout-session-completed",
         ):
             # create the product dynamodb table
