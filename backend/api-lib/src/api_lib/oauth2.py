@@ -153,6 +153,7 @@ async def token(
         value=f"Bearer {token_response.access_token}",
         secure=True,
         samesite="none",
+        httponly=True,
     )
 
     return token_response
