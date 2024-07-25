@@ -1,5 +1,5 @@
 import os
-from typing import List, Literal, Optional
+from typing import List, Literal, Optional, Dict, Any
 
 import stripe
 from fastapi import HTTPException, Request
@@ -15,7 +15,7 @@ router = APIRouter()
 
 
 @router.post("/webhook")
-async def webhook(request: Request):
+async def webhook(request: Request) -> Dict[str, Any]:
     if general_utils.DEVELOPMENT_LOCATION == "local":
         webhook_secret = os.environ["STRIPE_WEBHOOK_SECRET_LOCAL"]
     else:
