@@ -64,7 +64,7 @@ elif [[ $MODE == "synth" ]]; then
     echo "INFO: Finished Synthesizing infrastructure"
 elif [[ $MODE == "destroy" ]]; then
     echo "INFO: Destroying infrastructure"
-    yes | cdk destroy
+    yes | cdk destroy --all
     echo "INFO: Finished destroying infrastructure"
 else
     echo "ERROR: Invalid deployment mode: $MODE"
