@@ -18,12 +18,15 @@ on:
           - deploy
           - synth
           - destroy
+  push:
+    branches: master
+    paths: backend/**/*.py
 permissions:
   id-token: write
   contents: read
 env:
-  DEVELOPMENT_ENVIRONMENT: ${{ inputs.development_environment }}
-  MODE: ${{ inputs.mode }}
+  DEVELOPMENT_ENVIRONMENT: ${{ github.event_name == 'workflow_dispatch' && inputs.development_environment || 'auto' }}
+  MODE: ${{ github.event_name == 'workflow_dispatch' && inputs.mode || 'deploy' }}
   COMPANY: ${{ vars.COMPANY }}
   DEV_FACEBOOK_CLIENT_ID: ${{ secrets.DEV_FACEBOOK_CLIENT_ID }}
   DEV_FACEBOOK_CLIENT_SECRET: ${{ secrets.DEV_FACEBOOK_CLIENT_SECRET }}
@@ -38,7 +41,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.DEV_AWS_GITHUB_ACTION_ROLE }}
-          aws-region: ${{ inputs.region }}
+          aws-region: ${{ github.event_name == 'workflow_dispatch' && inputs.development_environment || 'ap-southeast-2' }}
       - name: Checkout
         uses: actions/checkout@v4
       - name: Initialize Python Backend
