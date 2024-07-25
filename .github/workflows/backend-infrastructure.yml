@@ -21,8 +21,6 @@ on:
   push:
     branches:
       - master
-      - feature/*
-      - fix/*
     paths: backend/**/*.py
 permissions:
   id-token: write
