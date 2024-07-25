@@ -42,7 +42,7 @@ async def webhook(request: Request):
 
     response = {"message": f"event type {event['type']} not handled"}
 
-    if event_type in ("product", "price"):
+    if event_type in ("product", "price", "customer"):
         response = stripe_utils.process_stripe_crud_event(
             event_data=event,
             table=f"{general_utils.COMPANY}-{general_utils.DEVELOPMENT_ENVIRONMENT}-{event_type}",
