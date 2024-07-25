@@ -87,12 +87,13 @@ class InfrastructureStack(Stack):
         # create the function url for the lambda function
         function_url = api.add_function_url(
             auth_type=L.FunctionUrlAuthType.NONE,
-            # cross origin resource sharing
-            cors=L.FunctionUrlCorsOptions(
-                allowed_origins=["*"],
-                allowed_methods=[L.HttpMethod.ALL],
-                allowed_headers=["*"],
-            ),
+            # cross origin resource sharing we disable this on the lambda as it
+            # is already being handled by fastapi
+            # cors=L.FunctionUrlCorsOptions(
+            #     allowed_origins=["*"],
+            #     allowed_methods=[L.HttpMethod.ALL],
+            #     allowed_headers=["*"],
+            # ),
         )
 
         # create an ssm parameter pointing to the lambda function url
