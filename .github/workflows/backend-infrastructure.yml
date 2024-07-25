@@ -19,7 +19,9 @@ on:
           - synth
           - destroy
   push:
-    branches: master
+    branches:
+      - master
+      - feature/*
     paths: backend/**/*.py
 permissions:
   id-token: write
@@ -41,7 +43,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.DEV_AWS_GITHUB_ACTION_ROLE }}
-          aws-region: ${{ github.event_name == 'workflow_dispatch' && inputs.development_environment || 'ap-southeast-2' }}
+          aws-region: ${{ github.event_name == 'workflow_dispatch' && inputs.region || 'ap-southeast-2' }}
       - name: Checkout
         uses: actions/checkout@v4
       - name: Initialize Python Backend
