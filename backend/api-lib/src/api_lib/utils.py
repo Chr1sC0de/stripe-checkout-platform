@@ -1,7 +1,7 @@
 import enum
 import os
 import time
-from typing import Any, Dict, List, Literal, Optional, overload, Callable
+from typing import Any, Dict, List, Literal, Optional, overload
 
 import boto3
 import boto3.dynamodb.types
