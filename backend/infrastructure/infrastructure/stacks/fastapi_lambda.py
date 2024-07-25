@@ -51,8 +51,8 @@ class InfrastructureStack(Stack):
         )
 
         for table_name in (
-            "product-table",
-            "price-table",
+            "product",
+            "price",
             "checkout-session-completed",
         ):
             # create the product dynamodb table
