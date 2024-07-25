@@ -1,5 +1,5 @@
 import os
-from typing import List, Literal
+from typing import List, Literal, Optional
 
 import stripe
 from fastapi import HTTPException, Request
@@ -64,17 +64,26 @@ class PriceItem(BaseModel):
 
 @router.post("/create-checkout-session")
 async def create_checkout_session(
-    line_items: List[PriceItem], return_type: Literal["redirect", "json"] = "json"
+    line_items: List[PriceItem],
+    return_type: Literal["redirect", "json"] = "json",
+    success_url: Optional[str] = None,
+    cancel_url: Optional[str] = None,
 ):
-    if general_utils.DEVELOPMENT_LOCATION == "local":
+    if (
+        general_utils.DEVELOPMENT_LOCATION == "local"
+        and success_url is None
+        and cancel_url is None
+    ):
         domain_url = "https://0.0.0.0:3000"
+        success_url = domain_url + "?success=true"
+        cancel_url = domain_url + "?success=true"
 
     try:
         checkout_session = stripe.checkout.Session.create(
             line_items=[p.dict() for p in line_items],
             mode="payment",
-            success_url=domain_url + "?success=true",
-            cancel_url=domain_url + "?canceled=true",
+            success_url=success_url,
+            cancel_url=cancel_url,
             payment_method_types=[],
         )
     except Exception as e:
