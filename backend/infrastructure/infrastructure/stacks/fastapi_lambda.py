@@ -50,19 +50,17 @@ class InfrastructureStack(Stack):
             },
         )
 
-        # create the product dynamodb table
-        product_table = create_table_from_stripe_object(
-            self, f"{company_and_environment}-product-table"
-        )
+        for table_name in (
+            "product-table",
+            "price-table",
+            "checkout-session-completed",
+        ):
+            # create the product dynamodb table
+            table = create_table_from_stripe_object(
+                self, f"{company_and_environment}-{table_name}"
+            )
 
-        # create the price dynamodb table
-        price_table = create_table_from_stripe_object(
-            self, f"{company_and_environment}-price-table"
-        )
-
-        # allow lambda to read and write to the required tables
-        product_table.grant_read_write_data(api)
-        price_table.grant_read_write_data(api)
+            table.grant_read_write_data(api)
 
         # allow the lambda to access the various ssm parameters
         policy_statement = iam.PolicyStatement(
