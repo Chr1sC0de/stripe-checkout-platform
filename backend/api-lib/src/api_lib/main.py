@@ -7,7 +7,7 @@ from api_lib import oauth2, user, utils, stripe
 
 app = FastAPI()
 
-origins = ["https://0.0.0.0:3000", "https://localhost:3000"]
+origins = ["https://0.0.0.0:3000"]
 
 app.add_middleware(
     CORSMiddleware,
