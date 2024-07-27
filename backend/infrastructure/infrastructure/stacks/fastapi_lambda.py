@@ -90,7 +90,7 @@ class InfrastructureStack(Stack):
             # cross origin resource sharing
             cors=L.FunctionUrlCorsOptions(
                 # allow local frontend development
-                allowed_origins=["https://0.0.0.0:3000"],
+                allowed_origins=["https://0.0.0.0:3000", "https://localhost:3000"],
                 allowed_methods=[
                     L.HttpMethod.GET,
                     L.HttpMethod.POST,
