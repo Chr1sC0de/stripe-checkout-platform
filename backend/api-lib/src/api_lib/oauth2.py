@@ -102,6 +102,7 @@ async def token(
     redirect_uri: Optional[str] = Form(None),
     refresh_token: Optional[str] = Form(None),
     code: Optional[str] = Form(None),
+    cookie: Optional[bool] = Form(True),
 ) -> TokenResponse:
     if not code:
         raise HTTPException(status_code=400, detail="Invalid callback request")
@@ -148,14 +149,15 @@ async def token(
             detail="Unverified JWT",
         )
 
-    response.set_cookie(
-        key="Authorization",
-        value=f"Bearer {token_response.access_token}",
-        secure=True,
-        samesite="none",
-        httponly=True,
-        max_age=600,
-    )
+    if cookie:
+        response.set_cookie(
+            key="Authorization",
+            value=f"Bearer {token_response.access_token}",
+            secure=True,
+            samesite="lax",
+            httponly=True,
+            max_age=600,
+        )
 
     return token_response
 
