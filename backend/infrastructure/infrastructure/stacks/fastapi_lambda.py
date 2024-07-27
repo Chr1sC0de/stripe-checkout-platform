@@ -91,7 +91,11 @@ class InfrastructureStack(Stack):
             cors=L.FunctionUrlCorsOptions(
                 # allow local frontend development
                 allowed_origins=["https://0.0.0.0:3000"],
-                allowed_methods=["GET", "POST", "DELETE"],
+                allowed_methods=[
+                    L.HttpMethod.GET,
+                    L.HttpMethod.POST,
+                    L.HttpMethod.DELETE,
+                ],
                 allowed_headers=["Authorization", "Content-Type"],
                 allow_credentials=True,
             ),

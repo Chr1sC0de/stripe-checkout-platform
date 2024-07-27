@@ -2,7 +2,7 @@
 import { useEffect, useRef } from "react"
 import React from "react"
 
-const endpointURL = "https://0.0.0.0:8000"
+const endpointURL = "https://mtf4pr35a6mqcoxdviotpsyvbu0nbtxm.lambda-url.ap-southeast-2.on.aws"
 const baseURL = "https://0.0.0.0:3000"
 
 const getJWTToken = async (code: string): Promise<string> => {
