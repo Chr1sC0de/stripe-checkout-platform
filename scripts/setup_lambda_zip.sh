@@ -6,7 +6,7 @@ target_folder=$1
 
 echo $target_folder
 
-if [[ ! -n $target_folder ]]; then
+if [[ -z $target_folder ]]; then
     echo "ERROR: target folder not set"
     exit
 else
