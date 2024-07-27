@@ -101,9 +101,9 @@ async def token(
     grant_type: Annotated[Literal["authorization_code", "refresh_token"], Form()],
     redirect_uri: Optional[str] = Form(None),
     refresh_token: Optional[str] = Form(None),
+    max_age: int = 7200,
     code: Optional[str] = Form(None),
     cookie: Optional[bool] = Form(True),
-    domain: Optional[str] = Form(None),
 ) -> TokenResponse:
     if not code:
         raise HTTPException(status_code=400, detail="Invalid callback request")
@@ -157,8 +157,7 @@ async def token(
             secure=True,
             samesite="none",
             httponly=True,
-            max_age=600,
-            domain=domain,
+            max_age=max_age,
         )
 
     return token_response
