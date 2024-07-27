@@ -21,28 +21,41 @@ if [[ -n $GITHUB_ACTIONS ]]; then
 fi
 
 # shellcheck disable=SC2155
-source_folder=$(dirname -- "${BASH_SOURCE[0]}")
 
-cd "$source_folder"/../backend/api-lib || exit
+cd "$target_folder" || exit
 
-rye sync
+rye sync -f
 
-. .venv/bin/activate
+# . .venv/bin/activate
 
 echo "INFO: Creating zip"
 
-python -m pip install . -t lib
+# python -m pip install . -t lib
 
 if [ -d dist ]; then
     rm -rf dist
 fi
 
+if [ -d lib ]; then
+    rm -rf lib
+fi
+
 mkdir dist
 
+echo "INFO: Moving site-packages to lib"
+cp -r .venv/lib/python*/site-packages lib || exit
+echo "INFO: Finished moving site-packages to lib"
+
+echo "INFO: Copying main package to lib"
+cp -r src/* -t lib || exit
+echo "INFO: Finished copying main package to lib"
+
+echo "INFO: Zipping lib"
 (
     cd lib || exit
-    zip ../dist/lambda.zip -r .
+    zip ../dist/lambda.zip -r . -1 -q
 )
+echo "INFO: Finished zipping lib"
 
 rm -rf lib
 
