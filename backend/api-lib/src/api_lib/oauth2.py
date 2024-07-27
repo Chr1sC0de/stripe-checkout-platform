@@ -152,7 +152,7 @@ async def token(
         key="Authorization",
         value=f"Bearer {token_response.access_token}",
         secure=True,
-        samesite="lax",
+        samesite="none",
         httponly=True,
     )
 
