@@ -1,8 +1,17 @@
 #!/usr/bin/bash
 : '
-create a zip for the api library, this should be run after
-    /scripts/initialize_backend_python_environment.sh
+create a zip for a lambda library
 '
+target_folder=$1
+
+echo $target_folder
+
+if [[ ! -n $target_folder ]]; then
+    echo "ERROR: target folder not set"
+    exit
+else
+    echo "INFO: target lambda lib $target_folder"
+fi
 
 echo "INFO: Setting up lambda function"
 
@@ -16,9 +25,9 @@ source_folder=$(dirname -- "${BASH_SOURCE[0]}")
 
 cd "$source_folder"/../backend/api-lib || exit
 
-. .venv/bin/activate
-
 rye sync
+
+. .venv/bin/activate
 
 echo "INFO: Creating zip"
 
@@ -35,14 +44,6 @@ mkdir dist
     zip ../dist/lambda.zip -r .
 )
 
-zip dist/lambda.zip -u api.py
-
-chmod 775 dist/lambda.zip
-
 rm -rf lib
 
 echo "INFO: Finished creating zip"
-
-deactivate
-
-echo "INFO: Finished setting up lambda function"
