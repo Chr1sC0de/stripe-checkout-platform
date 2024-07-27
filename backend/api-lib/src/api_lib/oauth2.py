@@ -103,6 +103,7 @@ async def token(
     refresh_token: Optional[str] = Form(None),
     code: Optional[str] = Form(None),
     cookie: Optional[bool] = Form(True),
+    domain: Optional[str] = Form(None),
 ) -> TokenResponse:
     if not code:
         raise HTTPException(status_code=400, detail="Invalid callback request")
@@ -157,6 +158,7 @@ async def token(
             samesite="none",
             httponly=True,
             max_age=600,
+            domain=domain,
         )
 
     return token_response
