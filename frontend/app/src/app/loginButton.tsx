@@ -13,7 +13,7 @@ const getJWTToken = async (code: string): Promise<string> => {
             body: new URLSearchParams({
                 "grant_type": 'authorization_code',
                 "code": code,
-                "redirect_uri": baseURL
+                "redirect_uri": baseURL,
             }),
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -52,6 +52,7 @@ const LoginButton: React.FC<LoginButtonProps> = ({ provider, className }) => {
                     const newUrl = new URL(window.location.href);
                     newUrl.searchParams.delete('code');
                     window.history.replaceState({}, document.title, newUrl.toString());
+
                     window.location.href = `${baseURL}/home`;
                 }
             }
