@@ -1,5 +1,4 @@
 from fastapi import Depends, FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from api_lib import oauth2, user, utils, stripe
@@ -7,16 +6,19 @@ from api_lib import oauth2, user, utils, stripe
 
 app = FastAPI()
 
-origins = ["https://0.0.0.0:3000"]
+if utils.DEVELOPMENT_LOCATION == "local":
+    from fastapi.middleware.cors import CORSMiddleware
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-    expose_headers=["Content-Type", "Authorization"],
-)
+    origins = ["https://0.0.0.0:3000"]
+
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=origins,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+        expose_headers=["Content-Type", "Authorization"],
+    )
 
 
 @app.get("/")
