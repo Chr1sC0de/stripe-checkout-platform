@@ -89,7 +89,7 @@ class InfrastructureStack(Stack):
             auth_type=L.FunctionUrlAuthType.NONE,
             # cross origin resource sharing
             cors=L.FunctionUrlCorsOptions(
-                allowed_origins=["*"],
+                allowed_origins=["https://0.0.0.0:3000"],
                 allowed_methods=[L.HttpMethod.ALL],
                 allowed_headers=["*"],
             ),
