@@ -152,8 +152,9 @@ async def token(
         key="Authorization",
         value=f"Bearer {token_response.access_token}",
         secure=True,
-        samesite="none",
+        samesite="lax",
         httponly=True,
+        max_age=600,
     )
 
     return token_response
