@@ -93,6 +93,7 @@ class InfrastructureStack(Stack):
                 allowed_origins=["https://0.0.0.0:3000"],
                 allowed_methods=[L.HttpMethod.ALL],
                 allowed_headers=["*"],
+                allow_credentials=True,
             ),
         )
 
