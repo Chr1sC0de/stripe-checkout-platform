@@ -107,7 +107,6 @@ class InfrastructureStack(Stack):
         )
 
         # apply policies to lambda functions
-
         for lambda_object in (api, sync_stripe):
             lambda_object.add_to_role_policy(get_parameter_policy_statement)
             lambda_object.add_to_role_policy(http_policy_statement)
@@ -118,7 +117,7 @@ class InfrastructureStack(Stack):
             # cross origin resource sharing
             cors=L.FunctionUrlCorsOptions(
                 # allow local frontend development
-                allowed_origins=["https://0.0.0.0:3000", "https://localhost:3000"],
+                allowed_origins=["https://0.0.0.0:3000"],
                 allowed_methods=[
                     L.HttpMethod.GET,
                     L.HttpMethod.POST,
@@ -154,7 +153,6 @@ class InfrastructureStack(Stack):
         )
 
         # create an ssm parameter for the sync lambda sync
-
         ssm.StringParameter(
             self,
             "lambda_sync_stripe_arn",

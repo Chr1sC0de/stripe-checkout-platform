@@ -100,6 +100,7 @@ class InfrastructureStack(Stack):
                     r"https://0.0.0.0:8000/docs/oauth2-redirect",
                     r"https://0.0.0.0:8000/oauth2/token",
                     r"https://0.0.0.0:3000",
+                    r"https://0.0.0.0:3000/home",
                     r"https://www.example.com",
                 ]
             )
