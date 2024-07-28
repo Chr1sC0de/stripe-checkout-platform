@@ -2,6 +2,7 @@ import os
 
 from aws_cdk import (
     CfnOutput,
+    Duration,
     RemovalPolicy,
     Stack,
 )
@@ -59,7 +60,7 @@ class InfrastructureStack(Stack):
         sync_stripe = L.Function(
             self,
             f"{company_and_environment}_stripe_sync",
-            timeout=900,
+            timeout=Duration.seconds(900),
             code=L.Code.from_asset("../lambdas/sync-stripe/dist/lambda.zip"),
             **shared_lambda_kwargs,
         )
