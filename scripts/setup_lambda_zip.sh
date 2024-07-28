@@ -60,3 +60,11 @@ echo "INFO: Finished zipping lib"
 rm -rf lib
 
 echo "INFO: Finished creating zip"
+
+echo "INFO: Adding lambda entrypoint to zip"
+
+zip dist/lambda.zip -u entrypoint.py
+
+chmod 775 dist/lambda.zip
+
+echo "INFO: Finished adding lambda entrypoint to zip"

@@ -44,7 +44,7 @@ class InfrastructureStack(Stack):
             f"{company_and_environment}_api",
             code=L.Code.from_asset("../api-lib/dist/lambda.zip"),
             runtime=L.Runtime.PYTHON_3_10,
-            handler="api.handler",
+            handler="entrypoint.handler",
             environment={
                 "DEVELOPMENT_LOCATION": "aws",
                 "DEVELOPMENT_ENVIRONMENT": utils.DEVELOPMENT_ENVIRONMENT,

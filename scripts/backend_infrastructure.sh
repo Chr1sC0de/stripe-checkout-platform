@@ -10,7 +10,7 @@ export source_folder=$(dirname -- "${BASH_SOURCE[0]}")
 cd "$source_folder/.." || exit
 
 . "$source_folder/backend_infrastructure_set_env.sh"
-(. "$source_folder/setup_api_lambda_zip.sh" backend/api-lib)
+(. "$source_folder/setup_lambda_zip.sh" backend/api-lib)
 
 echo "INFO: The current aws cli version is: $(aws --version)"
 echo "INFO: The current npm version is: $(npm --version)"
