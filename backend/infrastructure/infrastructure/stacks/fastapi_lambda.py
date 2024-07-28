@@ -153,6 +153,15 @@ class InfrastructureStack(Stack):
             string_value=os.environ["STRIPE_WEBHOOK_SECRET"],
         )
 
+        # create an ssm parameter for the sync lambda sync
+
+        ssm.StringParameter(
+            self,
+            "lambda_sync_stripe_arn",
+            parameter_name=f"/{utils.COMPANY}/{utils.DEVELOPMENT_ENVIRONMENT}/lambda-sync-stripe-arn",
+            string_value=sync_stripe.function_arn(),
+        )
+
         # output the link to the endpoint
         CfnOutput(self, "api_url", value=function_url.url)
 
