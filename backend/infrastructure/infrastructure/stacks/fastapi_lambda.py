@@ -1,5 +1,6 @@
 import os
 
+from typing import Optional
 from aws_cdk import (
     CfnOutput,
     Duration,
@@ -15,12 +16,15 @@ from constructs import Construct
 from infrastructure import utils
 
 
-def create_table_from_stripe_object(stack: Stack, table_name: str):
+def create_table_from_stripe_object(
+    stack: Stack, table_name: str, sort_key: Optional[dynamodb.Attribute] = None
+):
     table = dynamodb.TableV2(
         stack,
         table_name,
         table_name=table_name,
         partition_key=dynamodb.Attribute(name="id", type=dynamodb.AttributeType.STRING),
+        sort_key=None,
         contributor_insights=True,
         removal_policy=(
             RemovalPolicy.DESTROY if "dev" in utils.DEVELOPMENT_ENVIRONMENT else None
@@ -71,9 +75,14 @@ class InfrastructureStack(Stack):
             "customer",
             "checkout-session-completed",
         ):
+            if table_name == "checkout-session-completed":
+                sort_key = dynamodb.Attribute(
+                    name="customer", type=dynamodb.AttributeType.STRING
+                )
+
             # create the product dynamodb table
             table = create_table_from_stripe_object(
-                self, f"{company_and_environment}-{table_name}"
+                self, f"{company_and_environment}-{table_name}", sort_key=sort_key
             )
 
             table.grant_read_write_data(api)
