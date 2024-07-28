@@ -38,17 +38,29 @@ class InfrastructureStack(Stack):
         super().__init__(scope, construct_id, **kwargs)
         company_and_environment = f"{utils.COMPANY}-{utils.DEVELOPMENT_ENVIRONMENT}"
 
-        # create the lambda function
-        api = L.Function(
-            self,
-            f"{company_and_environment}_api",
-            code=L.Code.from_asset("../api-lib/dist/lambda.zip"),
+        shared_lambda_kwargs = dict(
             runtime=L.Runtime.PYTHON_3_10,
             handler="entrypoint.handler",
             environment={
                 "DEVELOPMENT_LOCATION": "aws",
                 "DEVELOPMENT_ENVIRONMENT": utils.DEVELOPMENT_ENVIRONMENT,
             },
+        )
+
+        # create the api lambda function
+        api = L.Function(
+            self,
+            f"{company_and_environment}_api",
+            code=L.Code.from_asset("../api-lib/dist/lambda.zip"),
+            **shared_lambda_kwargs,
+        )
+
+        # create the sync-stripe lambda function
+        sync_stripe = L.Function(
+            self,
+            f"{company_and_environment}_stripe_sync",
+            code=L.Code.from_asset("../lambdas/sync-stripe/dist/lambda.zip"),
+            **shared_lambda_kwargs,
         )
 
         for table_name in (
@@ -63,6 +75,7 @@ class InfrastructureStack(Stack):
             )
 
             table.grant_read_write_data(api)
+            table.grant_read_write_data(sync_stripe)
 
         # allow the lambda to access the various ssm parameters
         policy_statement = iam.PolicyStatement(
