@@ -1,13 +1,14 @@
 import os
-from typing import List, Literal, Optional, Dict, Any
+from typing import Annotated, Any, Dict, List, Literal, Optional
 
 import stripe
-from fastapi import HTTPException, Request
+from fastapi import Depends, HTTPException, Request
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.routing import APIRouter
 from pydantic import BaseModel
 from starlette.status import HTTP_400_BAD_REQUEST
 
+from api_lib import oauth2
 from api_lib import utils as general_utils
 from api_lib.stripe import utils as stripe_utils
 
@@ -64,6 +65,7 @@ class PriceItem(BaseModel):
 
 @router.post("/create-checkout-session")
 async def create_checkout_session(
+    access_token: Annotated[str, Depends(oauth2.validate_bearer)],
     line_items: List[PriceItem],
     return_type: Literal["redirect", "json"] = "json",
     success_url: Optional[str] = None,
@@ -78,9 +80,18 @@ async def create_checkout_session(
         success_url = domain_url + "?success=true"
         cancel_url = domain_url + "?success=true"
 
+    client = general_utils.get_client("cognito-idp")
+
+    customer_id = [
+        k
+        for k in client.get_user(AccessToken=access_token)["UserAttributes"]
+        if k["Name"] == "custom:stripe_customer_id"
+    ][0]["Value"]
+
     try:
         checkout_session = stripe.checkout.Session.create(
             line_items=[p.dict() for p in line_items],
+            customer=customer_id,
             mode="payment",
             success_url=success_url,
             cancel_url=cancel_url,
