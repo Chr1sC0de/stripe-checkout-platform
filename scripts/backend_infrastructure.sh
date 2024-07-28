@@ -1,9 +1,5 @@
 #! /bin/bash
 
-# if [[ -d ~/.aws/config ]]; then
-#     rm ~/.aws/config
-# fi
-
 # shellcheck disable=SC2155
 export source_folder=$(dirname -- "${BASH_SOURCE[0]}")
 
