@@ -78,15 +78,13 @@ class InfrastructureStack(Stack):
             table.grant_read_write_data(sync_stripe)
 
         # allow the lambda to access the various ssm parameters
-        policy_statement = iam.PolicyStatement(
+        get_parameter_policy_statement = iam.PolicyStatement(
             actions=["ssm:GetParameter"],
             effect=iam.Effect.ALLOW,
             resources=[
                 f"arn:aws:ssm:{self.region}:{self.account}:parameter/{utils.COMPANY}/{utils.DEVELOPMENT_ENVIRONMENT}/*",
             ],
         )
-
-        api.add_to_role_policy(policy_statement)
 
         # Add IAM policy to allow the lambda to make API HTTP requests on all endpoints
         http_policy_statement = iam.PolicyStatement(
@@ -95,7 +93,11 @@ class InfrastructureStack(Stack):
             resources=["*"],  # Adjust this to restrict the resources if necessary
         )
 
-        api.add_to_role_policy(http_policy_statement)
+        # apply policies to lambda functions
+
+        for lambda_object in (api, sync_stripe):
+            lambda_object.add_to_role_policy(get_parameter_policy_statement)
+            lambda_object.add_to_role_policy(http_policy_statement)
 
         # create the function url for the lambda function
         function_url = api.add_function_url(
