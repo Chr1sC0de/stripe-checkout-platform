@@ -79,6 +79,8 @@ class InfrastructureStack(Stack):
                 sort_key = dynamodb.Attribute(
                     name="customer", type=dynamodb.AttributeType.STRING
                 )
+            else:
+                sort_key = None
 
             # create the product dynamodb table
             table = create_table_from_stripe_object(
