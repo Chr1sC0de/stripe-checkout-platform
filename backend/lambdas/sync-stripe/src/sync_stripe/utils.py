@@ -122,16 +122,23 @@ def sync_product_price_customer_table():
 
 def sync_completed_checkout_sessions():
     client = get_client("dynamodb")
-    checkout_sessions = stripe.checkout.Session.list()["data"]
+    checkout_sessions = stripe.checkout.Session.list(limit=100)["data"]
     for checkout_session in checkout_sessions:
+        if checkout_session["customer"] is None:
+            checkout_session["customer"] = "N/A"
         checkout_session["line_items"] = stripe.checkout.Session.list_line_items(
             checkout_session["id"]
         )["data"]
         serialized_checkout_session = type_serializer.serialize(checkout_session)["M"]
-        update_keys = [k for k in checkout_session.keys() if k != "id"]
+        update_keys = [
+            k for k in checkout_session.keys() if k != "id" and k != "customer"
+        ]
         client.update_item(
             TableName=DynamoDBTables.CHECKOUT_SESSION_COMPLETED.value,
-            Key={"id": serialized_checkout_session["id"]},
+            Key={
+                "id": serialized_checkout_session["id"],
+                "customer": serialized_checkout_session["customer"],
+            },
             ExpressionAttributeNames={f"#{k}": k for k in update_keys},
             ExpressionAttributeValues={
                 f":{k}": serialized_checkout_session[k] for k in update_keys
