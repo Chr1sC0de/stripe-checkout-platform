@@ -1,8 +1,8 @@
 #! /bin/bash
 
-if [[ -d ~/.aws/config ]]; then
-    rm ~/.aws/config
-fi
+# if [[ -d ~/.aws/config ]]; then
+#     rm ~/.aws/config
+# fi
 
 # shellcheck disable=SC2155
 export source_folder=$(dirname -- "${BASH_SOURCE[0]}")
@@ -10,18 +10,23 @@ export source_folder=$(dirname -- "${BASH_SOURCE[0]}")
 cd "$source_folder/.." || exit
 
 . "$source_folder/backend_infrastructure_set_env.sh"
-(. "$source_folder/setup_lambda_zip.sh" backend/api-lib)
 
-echo "INFO: The current aws cli version is: $(aws --version)"
-echo "INFO: The current npm version is: $(npm --version)"
+function install_cdk() {
+    echo "INFO: The current cdk version is: $(cdk --version)"
+    echo "INFO: The current aws cli version is: $(aws --version)"
+    echo "INFO: The current npm version is: $(npm --version)"
+    if ! [ -x "$(command -v cdk)" ]; then
+        echo "INFO: No cdk command, installing"
+        npm install -g aws-cdk
+        echo "INFO: Finished installing cdk"
+    fi
+}
 
-if ! [ -x "$(command -v cdk)" ]; then
-    echo "INFO: No cdk command, installing"
-    npm install -g aws-cdk
-    echo "INFO: Finished installing cdk"
-fi
-
-echo "INFO: The current cdk version is: $(cdk --version)"
+# parallelize the creation of lambda functions
+(. "$source_folder/setup_lambda_zip.sh" backend/api-lib)&
+(. "$source_folder/setup_lambda_zip.sh" backend/lambdas/sync-stripe)&
+install_cdk&
+wait
 
 cd ./backend/infrastructure || exit
 
