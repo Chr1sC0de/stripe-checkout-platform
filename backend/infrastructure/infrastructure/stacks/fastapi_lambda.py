@@ -159,7 +159,7 @@ class InfrastructureStack(Stack):
             self,
             "lambda_sync_stripe_arn",
             parameter_name=f"/{utils.COMPANY}/{utils.DEVELOPMENT_ENVIRONMENT}/lambda-sync-stripe-arn",
-            string_value=sync_stripe.function_arn(),
+            string_value=sync_stripe.function_arn,
         )
 
         # output the link to the endpoint
