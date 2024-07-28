@@ -1,10 +1,11 @@
 import enum
 import os
 import time
+from typing import Literal, overload
 
 import boto3
+import boto3.dynamodb.types
 import stripe
-from typing import Literal, overload
 from mypy_boto3_dynamodb import DynamoDBClient
 from mypy_boto3_ssm import SSMClient
 
@@ -100,6 +101,41 @@ stripe.api_key = get_ssm_parameter_value(SSMParameterName.SSM_STRIPE_SECRET_KEY.
 # ---------------------------------------------------------------------------- #
 
 
-def sync_product_table():
+def sync_product_price_customer_table():
     client = get_client("dynamodb")
+    for name in ("product", "price", "customer"):
+        table_name = getattr(DynamoDBTables, name.upper()).value
+        objects = getattr(stripe, name.capitalize()).list(limit=100)["data"]
+        serialized_products = [p["M"] for p in type_serializer.serialize(objects)["L"]]
+        for product in serialized_products:
+            update_keys = [k for k in product.keys() if k != "id"]
+            client.update_item(
+                TableName=table_name,
+                Key={"id": product["id"]},
+                ExpressionAttributeNames={f"#{k}": k for k in update_keys},
+                ExpressionAttributeValues={f":{k}": product[k] for k in update_keys},
+                UpdateExpression=f"SET {', '.join([f'#{k}=:{k}' for k in update_keys])}",
+            )
+
+    client.close()
+
+
+def sync_completed_checkout_sessions():
+    client = get_client("dynamodb")
+    checkout_sessions = stripe.checkout.Session.list()["data"]
+    for checkout_session in checkout_sessions:
+        checkout_session["line_items"] = stripe.checkout.Session.list_line_items(
+            checkout_session["id"]
+        )["data"]
+        serialized_checkout_session = type_serializer.serialize(checkout_session)["M"]
+        update_keys = [k for k in checkout_session.keys() if k != "id"]
+        client.update_item(
+            TableName=DynamoDBTables.CHECKOUT_SESSION_COMPLETED.value,
+            Key={"id": serialized_checkout_session["id"]},
+            ExpressionAttributeNames={f"#{k}": k for k in update_keys},
+            ExpressionAttributeValues={
+                f":{k}": serialized_checkout_session[k] for k in update_keys
+            },
+            UpdateExpression=f"SET {', '.join([f'#{k}=:{k}' for k in update_keys])}",
+        )
     client.close()
