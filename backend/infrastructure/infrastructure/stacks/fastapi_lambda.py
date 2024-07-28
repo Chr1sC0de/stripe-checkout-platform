@@ -24,7 +24,7 @@ def create_table_from_stripe_object(
         table_name,
         table_name=table_name,
         partition_key=dynamodb.Attribute(name="id", type=dynamodb.AttributeType.STRING),
-        sort_key=None,
+        sort_key=sort_key,
         contributor_insights=True,
         removal_policy=(
             RemovalPolicy.DESTROY if "dev" in utils.DEVELOPMENT_ENVIRONMENT else None
