@@ -73,7 +73,7 @@ class InfrastructureStack(Stack):
             "product",
             "price",
             "customer",
-            # "checkout-session-completed",
+            "checkout-session-completed",
         ):
             if table_name == "checkout-session-completed":
                 sort_key = dynamodb.Attribute(
