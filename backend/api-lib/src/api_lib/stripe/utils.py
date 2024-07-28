@@ -94,6 +94,8 @@ def process_checkout_session_completed_event(event_data: Dict[str, Any]):
             event_data["data"]["object"]["id"]
         )["data"]
     )
+    if event_data["data"]["object"]["customer"] is None:
+        event_data["data"]["object"]["line_items"]["customer"] = "NONE"
     return process_stripe_crud_event(
         event_data=event_data, table=checkout_table, operation="created"
     )
