@@ -1,5 +1,5 @@
 import time
-from typing import Annotated, Literal, Optional
+from typing import Annotated, Dict, Literal, Optional
 
 import requests
 from fastapi import Cookie, Depends, Form, HTTPException, Response
@@ -196,8 +196,8 @@ async def validate_bearer(
 async def validate_login_cookie(
     request: Request,
     response: Response,
-) -> bool:
+) -> Dict[str, bool]:
     authorization = request.cookies.get("Authorization")
     if authorization is None:
-        return False
-    return utils.verify_jwt(authorization.split(" ")[-1])
+        return {"valid": False}
+    return {"valid": utils.verify_jwt(authorization.split(" ")[-1])}
