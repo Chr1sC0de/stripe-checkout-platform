@@ -104,3 +104,8 @@ async def create_checkout_session(
         return RedirectResponse(url=checkout_session.url)
     elif return_type == "json":
         return JSONResponse(content={"url": f"{checkout_session.url}"})
+
+
+@router.get("/products")
+async def get_products():
+    return

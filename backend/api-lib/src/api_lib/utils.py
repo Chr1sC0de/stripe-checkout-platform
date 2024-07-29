@@ -90,6 +90,10 @@ def get_ssm_parameter_value(parameter_name: SSMParameterName, max_retries=5) -> 
     return None
 
 
+def get_api_url() -> str:
+    return get_ssm_parameter_value(SSMParameterName.SSM_API_FUNCTION_URL.value)
+
+
 # ---------------------------------------------------------------------------- #
 #                            set the stripe api key                            #
 # ---------------------------------------------------------------------------- #

@@ -27,14 +27,10 @@ client_id = utils.get_ssm_parameter_value(
     utils.SSMParameterName.USER_POOL_CLIENT_ID.value
 )
 
-api_url = utils.get_ssm_parameter_value(
-    utils.SSMParameterName.SSM_API_FUNCTION_URL.value
-)
-
 token_redirect_uri = (
     "https://0.0.0.0:8000/docs"
     if utils.DEVELOPMENT_LOCATION == "local"
-    else f"{api_url}docs"
+    else f"{utils.get_api_url()}docs"
 )
 
 
