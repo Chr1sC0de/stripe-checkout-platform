@@ -190,3 +190,14 @@ async def validate_bearer(
         )
 
     return access_token
+
+
+@router.post("/validate_login_cookie")
+async def validate_login_cookie(
+    request: Request,
+    response: Response,
+) -> bool:
+    authorization = request.cookies.get("Authorization")
+    if authorization is None:
+        return False
+    return utils.verify_jwt(authorization.split(" ")[-1])
