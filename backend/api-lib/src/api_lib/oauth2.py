@@ -192,8 +192,8 @@ async def validate_bearer(
     return access_token
 
 
-@router.post("/validate_login_cookie")
-async def validate_login_cookie(
+@router.post("/validate_auth_cookie")
+async def validate_auth_cookie(
     request: Request,
     response: Response,
 ) -> Dict[str, bool]:
