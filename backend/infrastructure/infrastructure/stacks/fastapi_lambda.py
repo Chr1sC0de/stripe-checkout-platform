@@ -69,15 +69,6 @@ class InfrastructureStack(Stack):
             **shared_lambda_kwargs,
         )
 
-        # Define the IAM role
-        role = iam.Role(
-            self,
-            "MyPartiQLRole",
-            assumed_by=iam.ServicePrincipal(
-                "lambda.amazonaws.com"
-            ),  # Replace with your service principal
-        )
-
         for table_name in (
             "product",
             "price",
@@ -99,8 +90,7 @@ class InfrastructureStack(Stack):
             table.grant_read_write_data(api)
             table.grant_read_write_data(sync_stripe)
 
-            # Attach a policy that grants PartiQL permissions
-            role.add_to_policy(
+            api.add_to_role_policy(
                 iam.PolicyStatement(
                     actions=[
                         "dynamodb:PartiQLSelect",
