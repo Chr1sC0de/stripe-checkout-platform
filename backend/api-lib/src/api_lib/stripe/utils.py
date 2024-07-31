@@ -1,6 +1,8 @@
+from typing import Any, Dict, List, Literal, TypeVar
+
 import stripe
+
 from api_lib import utils as U
-from typing import Dict, Any, Literal
 
 
 def process_stripe_crud_event(
@@ -99,3 +101,28 @@ def process_checkout_session_completed_event(event_data: Dict[str, Any]):
     return process_stripe_crud_event(
         event_data=event_data, table=checkout_table, operation="created"
     )
+
+
+T = TypeVar("T")
+
+
+def get_table_items(
+    table_name: str,
+    mode: T,
+    active_only: bool = True,
+) -> List[T]:
+    client = U.get_client(service_name="dynamodb")
+
+    if active_only:
+        statement = f'select * from "{table_name}" where active=true'
+    else:
+        statement = f'select * from "{table_name}"'
+
+    serialized_products = client.execute_statement(Statement=statement)["Items"]
+
+    deserialized_products = [
+        {k: U.type_deserializer.deserialize(v) for k, v in S.items()}
+        for S in serialized_products
+    ]
+
+    return [mode(**p) for p in deserialized_products]

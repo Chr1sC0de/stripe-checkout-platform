@@ -7,11 +7,11 @@ from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.routing import APIRouter
 from pydantic import BaseModel
 from starlette.status import HTTP_400_BAD_REQUEST
-from decimal import Decimal
 
 from api_lib import oauth2
 from api_lib import utils as general_utils
 from api_lib.stripe import utils as stripe_utils
+from api_lib.stripe import schemas
 
 router = APIRouter()
 
@@ -107,46 +107,17 @@ async def create_checkout_session(
         return JSONResponse(content={"url": f"{checkout_session.url}"})
 
 
-class Product(BaseModel):
-    default_price: Optional[str]
-    livemode: bool
-    metadata: Optional[Dict[Any, Any]]
-    object: str
-    package_dimensions: Optional[Dict[Any, Any]]
-    created: Decimal
-    statement_descriptor: Optional[str]
-    attributes: List[Any]
-    shippable: Optional[bool]
-    url: Optional[str]
-    name: str
-    active: bool
-    updated: Decimal
-    images: List[str]
-    marketing_features: List[Dict[Any, Any]]
-    tax_code: Optional[str]
-    description: Optional[str]
-    id: str
-    unit_label: Optional[str]
-    type: str
-
-
 @router.get("/products")
-async def get_products(active_only: bool = True) -> List[Product]:
-    table_name = (
-        f"{general_utils.COMPANY}-{general_utils.DEVELOPMENT_ENVIRONMENT}-product"
+async def get_products(active_only: bool = True) -> List[schemas.Product]:
+    return stripe_utils.get_table_items(
+        f"{general_utils.COMPANY}-{general_utils.DEVELOPMENT_ENVIRONMENT}-product",
+        schemas.Product,
     )
-    client = general_utils.get_client(service_name="dynamodb")
 
-    if active_only:
-        statement = f'select * from "{table_name}" where active=true'
-    else:
-        statement = f'select * from "{table_name}"'
 
-    serialized_products = client.execute_statement(Statement=statement)["Items"]
-
-    deserialized_products = [
-        {k: general_utils.type_deserializer.deserialize(v) for k, v in S.items()}
-        for S in serialized_products
-    ]
-
-    return [Product(**p) for p in deserialized_products]
+@router.get("/prices")
+async def get_prices(active_only: bool = True) -> List[schemas.Price]:
+    return stripe_utils.get_table_items(
+        f"{general_utils.COMPANY}-{general_utils.DEVELOPMENT_ENVIRONMENT}-price",
+        schemas.Price,
+    )
