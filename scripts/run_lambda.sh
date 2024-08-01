@@ -1,3 +1,5 @@
+#! /bin/bash
+
 # shellcheck disable=SC2155
 export source_folder=$(dirname -- "${BASH_SOURCE[0]}")
 
@@ -14,6 +16,8 @@ LAMBDA_ARN=$(\
     aws ssm get-parameter --name "$PARAMETER_NAME" | \
     grep Value: | \
     sed "s/.\+Value: \(arn.\+\)/\1/")
+    
+echo "INFO: ARN $LAMBDA_ARN"
 
 aws lambda invoke \
     --function-name "$LAMBDA_ARN" \
