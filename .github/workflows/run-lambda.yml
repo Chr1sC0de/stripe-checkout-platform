@@ -24,7 +24,8 @@ env:
   DEV_STRIPE_SECRET_KEY: ${{ secrets.DEV_STRIPE_SECRET_KEY }}
   DEV_STRIPE_WEBHOOK_SECRET: ${{ secrets.DEV_STRIPE_WEBHOOK_SECRET }}
 jobs:
-  infrastructure:
+  lambda:
+    name: ${{ inputs.lambda-ssm-arn }}-run-lambda
     runs-on: ubuntu-20.04
     steps:
       - name: Configure AWS Credentials
