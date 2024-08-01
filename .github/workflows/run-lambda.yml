@@ -1,4 +1,4 @@
-name: Sync Stripe
+name: Run Lambda
 on:
   workflow_dispatch:
     inputs:
@@ -12,6 +12,7 @@ on:
         type: string
       lambda-ssm-arn:
         default: lambda-sync-stripe
+run-name: "Run Lambda: ${{ inputs.lambda-ssm-arn }}"
 permissions:
   id-token: write
   contents: read
