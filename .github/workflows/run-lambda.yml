@@ -35,9 +35,6 @@ jobs:
           aws-region: ${{ github.event_name == 'workflow_dispatch' && inputs.region || 'ap-southeast-2' }}
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Initialize Environment Variables
-        run: |
-          . ./scripts/backend_infrastructure_set_env.sh
       - name: Run Sync Stripe Lamda
         run: |
           . ./scripts/run_lambda.sh lambda-sync-stripe

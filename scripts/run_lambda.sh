@@ -1,3 +1,10 @@
+# shellcheck disable=SC2155
+export source_folder=$(dirname -- "${BASH_SOURCE[0]}")
+
+cd "$source_folder/.." || exit
+
+. "$source_folder/backend_infrastructure_set_env.sh"
+
 PARAMETER_NAME="/$COMPANY/$DEVELOPMENT_ENVIRONMENT/$1"
 
 echo "INFO: PARAMETER_NAME=$PARAMETER_NAME"
