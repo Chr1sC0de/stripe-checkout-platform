@@ -13,11 +13,9 @@ echo "INFO: PARAMETER_NAME=$PARAMETER_NAME"
 echo "INFO: Started running lambda $1"
 
 LAMBDA_ARN=$(\
-    aws ssm get-parameter --name "$PARAMETER_NAME" | \
+    aws ssm get-parameter --name "$PARAMETER_NAME" --output yaml| \
     grep Value: | \
     sed "s/.\+Value: \(arn.\+\)/\1/")
-    
-echo "INFO: ARN $LAMBDA_ARN"
 
 aws lambda invoke \
     --function-name "$LAMBDA_ARN" \
