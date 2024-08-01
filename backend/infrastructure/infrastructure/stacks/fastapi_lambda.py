@@ -167,8 +167,8 @@ class InfrastructureStack(Stack):
         # create an ssm parameter for the sync lambda sync
         ssm.StringParameter(
             self,
-            "lambda_sync_stripe_arn",
-            parameter_name=f"/{utils.COMPANY}/{utils.DEVELOPMENT_ENVIRONMENT}/lambda-sync-stripe-arn",
+            "lambda_sync_stripe",
+            parameter_name=f"/{utils.COMPANY}/{utils.DEVELOPMENT_ENVIRONMENT}/lambda-sync-stripe",
             string_value=sync_stripe.function_arn,
         )
 
