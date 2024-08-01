@@ -1,0 +1,38 @@
+name: Sync Stripe
+on:
+  workflow_dispatch:
+    inputs:
+      development_environment:
+        default: auto
+        required: false
+        type: string
+      region:
+        default: ap-southeast-2
+        required: false
+        type: string
+      lambda-ssm-arn:
+        default: lambda-sync-stripe
+permissions:
+  id-token: write
+  contents: read
+env:
+  DEVELOPMENT_ENVIRONMENT: ${{ github.event_name == 'workflow_dispatch' && inputs.development_environment || 'auto' }}
+  COMPANY: ${{ vars.COMPANY }}
+  DEV_FACEBOOK_CLIENT_ID: ${{ secrets.DEV_FACEBOOK_CLIENT_ID }}
+  DEV_FACEBOOK_CLIENT_SECRET: ${{ secrets.DEV_FACEBOOK_CLIENT_SECRET }}
+  DEV_STRIPE_SECRET_KEY: ${{ secrets.DEV_STRIPE_SECRET_KEY }}
+  DEV_STRIPE_WEBHOOK_SECRET: ${{ secrets.DEV_STRIPE_WEBHOOK_SECRET }}
+jobs:
+  infrastructure:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.DEV_AWS_GITHUB_ACTION_ROLE }}
+          aws-region: ${{ github.event_name == 'workflow_dispatch' && inputs.region || 'ap-southeast-2' }}
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Run Sync Stripe Lamda
+        run: |
+          . ./scripts/run_lambda.sh lambda-sync-stripe
