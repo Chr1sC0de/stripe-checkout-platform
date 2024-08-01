@@ -22,7 +22,7 @@ on:
     branches:
       - master
     paths: backend/**/*.py
-run-name: Backend Infrastructure ${{ github.event_name == 'workflow_dispatch' && inputs.mode || 'deploy' }}
+run-name: "Backend Infrastructure: ${{ github.event_name == 'workflow_dispatch' && inputs.mode || 'deploy' }}"
 permissions:
   id-token: write
   contents: read
@@ -37,7 +37,7 @@ env:
 jobs:
   infrastructure:
     runs-on: ubuntu-20.04
-    name: ${{ inputs.mode }}-backend-infrastructure
+    name: ${{ github.event_name == 'workflow_dispatch' && inputs.mode || 'deploy' }}-backend-infrastructure
     steps:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
