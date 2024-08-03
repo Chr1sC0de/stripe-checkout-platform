@@ -9,7 +9,7 @@ export source_folder=$(dirname -- "${BASH_SOURCE[0]}")
 cd "$source_folder" || exit
 
 # shellcheck disable=SC2046,SC2001,SC2005
-github_open_id_connect_providers=$(echo $(aws iam list-open-id-connect-providers) | grep github | sed "s/.\+\s\(arn:.\+githubusercontent.\+\)/\1/")
+github_open_id_connect_providers=$(echo $(aws iam list-open-id-connect-providers --output yaml) | grep github | sed "s/.\+\s\(arn:.\+githubusercontent.\+\)/\1/")
 
 if [[ -z $github_open_id_connect_providers ]]; then
     echo "INFO: No Github Open ID connect provider found creating..."
@@ -17,8 +17,9 @@ if [[ -z $github_open_id_connect_providers ]]; then
         --url https://token.actions.githubusercontent.com \
         --client-id-list sts.amazonaws.com
     # shellcheck disable=SC2046,SC2001,SC2005
-    github_open_id_connect_providers=$(echo $(aws iam list-open-id-connect-providers) | grep github | sed "s/.\+\s\(arn:.\+githubusercontent.\+\)/\1/")
+    github_open_id_connect_providers=$(echo $(aws iam list-open-id-connect-providers --output yaml) | grep github | sed "s/.\+\s\(arn:.\+githubusercontent.\+\)/\1/")
     echo "INFO: Finished creating Github Open ID Connect Provider"
+    echo "INFO: $github_open_id_connect_providers"
 fi
 
 echo "INFO: Open ID Connect Provider: $github_open_id_connect_providers"
@@ -60,7 +61,9 @@ echo "{
 }
 " >$trust_policy_file
 
-stack_qualifier=$(aws cloudformation describe-stacks --stack-name CDKToolkit | grep ExportName: | sed "s/.\+-\(.\+\)-.\+/\1/")
+stack_qualifier=$(aws cloudformation describe-stacks --stack-name CDKToolkit --output yaml | grep ExportName: | sed "s/.\+-\(.\+\)-.\+/\1/")
+
+echo "INFO: stack_qualifier=$stack_qualifier"
 
 echo "{
     \"Version\": \"2012-10-17\",
@@ -83,9 +86,13 @@ echo "{
 
 role_name=AWSGitHubActionsRole
 
+echo "INFO: creating role"
+
 aws iam create-role \
     --role-name $role_name \
     --assume-role-policy-document "file://$trust_policy_file" >create-role.log
+
+echo "INFO: finished creating role"
 
 # attach the system administrator policy
 
