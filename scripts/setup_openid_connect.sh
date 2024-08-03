@@ -98,7 +98,7 @@ echo "INFO: finished creating role"
 
 aws iam attach-role-policy \
     --role-name $role_name \
-    --policy-arn arn:aws:iam::aws:policy/job-function/SystemAdministrator
+    --policy-arn arn:aws:iam::aws:policy/AdministratorAccess
 
 # attach the cdk policy
 
