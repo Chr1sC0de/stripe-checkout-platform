@@ -58,7 +58,7 @@ type Price = {
 const getProducts = async (): Promise<Array<Product> | null> => {
     try {
         const response = await fetch(
-            `${endpointURL}/stripe/products`, { method: "GET" }
+            `${endpointURL}/stripe/products`, { method: "GET", }
         )
         if (!response.ok) {
             throw new Error(`Response status: ${response.status}`);
