@@ -91,6 +91,12 @@ async def authorize(
     return RedirectResponse(url=url)
 
 
+@router.post("/logout")
+async def logout(response: Response):
+    response.delete_cookie(key="Authorization")
+    return {"status": "successful"}
+
+
 @router.post("/token")
 async def token(
     response: Response,
