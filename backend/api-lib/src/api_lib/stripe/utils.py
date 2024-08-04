@@ -1,6 +1,8 @@
-from typing import Any, Dict, List, Literal, TypeVar
+from typing import Any, Dict, List, Literal, TypeVar, Optional
+from mypy_boto3_dynamodb import DynamoDBClient
 
 import stripe
+from api_lib.stripe import tables
 
 from api_lib import utils as U
 
@@ -88,9 +90,7 @@ def process_stripe_crud_event(
 
 
 def process_checkout_session_completed_event(event_data: Dict[str, Any]):
-    checkout_table = (
-        f"{U.COMPANY}-{U.DEVELOPMENT_ENVIRONMENT}-checkout-session-completed"
-    )
+    checkout_table = tables.CHECKOUT_SESSION_COMPLETE_TABLE
     event_data["data"]["object"]["line_items"] = (
         stripe.checkout.Session.list_line_items(
             event_data["data"]["object"]["id"]
@@ -106,9 +106,20 @@ def process_checkout_session_completed_event(event_data: Dict[str, Any]):
 T = TypeVar("T")
 
 
+def query_and_extract_products_from_statement(
+    client: DynamoDBClient, statement: str
+) -> Dict[str, any]:
+    serialized_products = client.execute_statement(Statement=statement)["Items"]
+
+    return [
+        {k: U.type_deserializer.deserialize(v) for k, v in S.items()}
+        for S in serialized_products
+    ]
+
+
 def get_table_items(
     table_name: str,
-    model: T,
+    model: Optional[T] = None,
     active_only: bool = True,
 ) -> List[T]:
     client = U.get_client(service_name="dynamodb")
@@ -118,11 +129,14 @@ def get_table_items(
     else:
         statement = f'select * from "{table_name}"'
 
-    serialized_products = client.execute_statement(Statement=statement)["Items"]
+    deserialized_products = query_and_extract_products_from_statement(client, statement)
 
-    deserialized_products = [
-        {k: U.type_deserializer.deserialize(v) for k, v in S.items()}
-        for S in serialized_products
-    ]
+    if model is not None:
+        return [model(**p) for p in deserialized_products]
+    return [p for p in deserialized_products]
 
-    return [model(**p) for p in deserialized_products]
+
+def get_line_items():
+    client = U.get_client(service_name="dynamodb")
+    checkout_session_table = tables.CHECKOUT_SESSION_COMPLETE_TABLE
+    statement = f'select line_items from "{checkout_session_table}" where active=true'

@@ -11,7 +11,7 @@ from starlette.status import HTTP_400_BAD_REQUEST
 from api_lib import oauth2
 from api_lib import utils as general_utils
 from api_lib.stripe import utils as stripe_utils
-from api_lib.stripe import schemas
+from api_lib.stripe import schemas, tables
 
 router = APIRouter()
 
@@ -110,7 +110,7 @@ async def create_checkout_session(
 @router.get("/products")
 async def get_products(active_only: bool = True) -> List[schemas.Product]:
     return stripe_utils.get_table_items(
-        f"{general_utils.COMPANY}-{general_utils.DEVELOPMENT_ENVIRONMENT}-product",
+        tables.PRODUCT_TABLE_NAME,
         schemas.Product,
     )
 
@@ -118,6 +118,10 @@ async def get_products(active_only: bool = True) -> List[schemas.Product]:
 @router.get("/prices")
 async def get_prices(active_only: bool = True) -> List[schemas.Price]:
     return stripe_utils.get_table_items(
-        f"{general_utils.COMPANY}-{general_utils.DEVELOPMENT_ENVIRONMENT}-price",
+        tables.PRICE_TABLE_NAME,
         schemas.Price,
     )
+
+
+@router.get("/product-popularity")
+async def get_product_popularity(): ...
