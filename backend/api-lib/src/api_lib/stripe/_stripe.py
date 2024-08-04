@@ -16,6 +16,11 @@ from api_lib.stripe import schemas, tables
 router = APIRouter()
 
 
+# ---------------------------------------------------------------------------- #
+#                              protected endpoints                             #
+# ---------------------------------------------------------------------------- #
+
+
 class PriceItem(BaseModel):
     price: str
     quantity: int
@@ -62,6 +67,11 @@ async def create_checkout_session(
         return RedirectResponse(url=checkout_session.url)
     elif return_type == "json":
         return JSONResponse(content={"url": f"{checkout_session.url}"})
+
+
+# ---------------------------------------------------------------------------- #
+#                             unprotected endpoints                            #
+# ---------------------------------------------------------------------------- #
 
 
 @router.post("/webhook")
