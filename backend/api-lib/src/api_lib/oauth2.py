@@ -93,7 +93,12 @@ async def authorize(
 
 @router.post("/logout")
 async def logout(response: Response):
-    response.delete_cookie(key="Authorization")
+    response.delete_cookie(
+        key="Authorization",
+        secure=True,
+        samesite="none",
+        httponly=True,
+    )
     return {"status": "successful"}
 
 
