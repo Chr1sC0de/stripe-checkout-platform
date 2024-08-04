@@ -108,7 +108,7 @@ T = TypeVar("T")
 
 def get_table_items(
     table_name: str,
-    mode: T,
+    model: T,
     active_only: bool = True,
 ) -> List[T]:
     client = U.get_client(service_name="dynamodb")
@@ -125,4 +125,4 @@ def get_table_items(
         for S in serialized_products
     ]
 
-    return [mode(**p) for p in deserialized_products]
+    return [model(**p) for p in deserialized_products]
