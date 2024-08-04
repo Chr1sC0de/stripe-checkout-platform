@@ -69,6 +69,57 @@ async def create_checkout_session(
         return JSONResponse(content={"url": f"{checkout_session.url}"})
 
 
+@router.get("/current-user-past-purchases")
+async def get_current_user_past_purchase(
+    access_token: Annotated[str, Depends(oauth2.validate_bearer)],
+):
+    cognito_client = general_utils.get_client("cognito-idp")
+    dynamodb_client = general_utils.get_client(service_name="dynamodb")
+
+    customer_id = [
+        v
+        for v in cognito_client.get_user(AccessToken=access_token)["UserAttributes"]
+        if v["Name"] == "custom:stripe_customer_id"
+    ][0]["Value"]
+
+    products = {
+        s["id"]: s for s in stripe_utils.get_table_items(tables.PRODUCT_TABLE_NAME)
+    }
+
+    output = []
+
+    def process_list_item(item):
+        created_date = item["created"]
+        for l in item["line_items"]:
+            l["created"] = created_date
+
+        return item["line_items"]
+
+    [
+        output.extend(process_list_item(i))
+        for i in stripe_utils.query_and_extract_items_from_statement(
+            dynamodb_client,
+            f"""select created, line_items from "{tables.CHECKOUT_SESSION_COMPLETE_TABLE}" where customer='{customer_id}'""",
+        )
+    ]
+
+    output = [
+        {c: o[c] for c in ["quantity", "price", "created", "currency"]} for o in output
+    ]
+    for o in output:
+        o["product"] = o["price"]["product"]
+        o["unit_amount"] = o["price"]["unit_amount"]
+        o["currency"] = o["price"]["currency"]
+        o["created"] = o["price"]["created"]
+        if o["product"] in products:
+            o["details"] = {n: products[o["product"]][n] for n in ["images", "name"]}
+        del o["price"]
+
+    cognito_client.close()
+    dynamodb_client.close()
+    return output
+
+
 # ---------------------------------------------------------------------------- #
 #                             unprotected endpoints                            #
 # ---------------------------------------------------------------------------- #
@@ -134,7 +185,7 @@ async def get_prices(active_only: bool = True) -> List[schemas.Price]:
 
 
 @router.get("/product-popularity")
-async def get_product_popularity():
+async def get_product_popularity() -> List[schemas.RankedProduct]:
     product_counter = {
         p["id"]: ({c: p[c] for c in ["id", "images", "name"]} | {"quantity": 0})
         for p in stripe_utils.get_table_items(

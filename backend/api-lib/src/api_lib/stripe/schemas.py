@@ -47,3 +47,10 @@ class Price(BaseModel):
     type: Optional[str]
     unit_amount: Optional[int]
     unit_amount_decimal: Optional[str]
+
+
+class RankedProduct(BaseModel):
+    id: str
+    images: List[str]
+    name: str
+    quantity: int
