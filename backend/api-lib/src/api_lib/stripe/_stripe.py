@@ -16,49 +16,6 @@ from api_lib.stripe import schemas, tables
 router = APIRouter()
 
 
-@router.post("/webhook")
-async def webhook(request: Request) -> Dict[str, Any]:
-    if general_utils.DEVELOPMENT_LOCATION == "local":
-        webhook_secret = os.environ["STRIPE_WEBHOOK_SECRET_LOCAL"]
-    else:
-        webhook_secret = general_utils.get_ssm_parameter_value(
-            general_utils.SSMParameterName.SSM_STRIPE_WEBHOOK_SECRET.value
-        )
-
-    headers = request.headers
-    signature = headers["stripe-signature"]
-
-    data = await request.body()
-
-    try:
-        event = stripe.Webhook.construct_event(
-            payload=data.decode("utf-8"),
-            sig_header=signature,
-            secret=webhook_secret,
-        )
-    except ValueError as e:
-        print("Error parsing payload: {}".format(str(e)))
-        raise HTTPException(status_code=HTTP_400_BAD_REQUEST)
-
-    event_type, *fields = event["type"].split(".")
-
-    response = {"message": f"event type {event['type']} not handled"}
-
-    if event_type in ("product", "price", "customer"):
-        response = stripe_utils.process_stripe_crud_event(
-            event_data=event,
-            table=f"{general_utils.COMPANY}-{general_utils.DEVELOPMENT_ENVIRONMENT}-{event_type}",
-            operation=fields[-1],
-        )
-
-    if event["type"] == "checkout.session.completed":
-        response = stripe_utils.process_checkout_session_completed_event(
-            event_data=event
-        )
-
-    return response
-
-
 class PriceItem(BaseModel):
     price: str
     quantity: int
@@ -107,6 +64,49 @@ async def create_checkout_session(
         return JSONResponse(content={"url": f"{checkout_session.url}"})
 
 
+@router.post("/webhook")
+async def webhook(request: Request) -> Dict[str, Any]:
+    if general_utils.DEVELOPMENT_LOCATION == "local":
+        webhook_secret = os.environ["STRIPE_WEBHOOK_SECRET_LOCAL"]
+    else:
+        webhook_secret = general_utils.get_ssm_parameter_value(
+            general_utils.SSMParameterName.SSM_STRIPE_WEBHOOK_SECRET.value
+        )
+
+    headers = request.headers
+    signature = headers["stripe-signature"]
+
+    data = await request.body()
+
+    try:
+        event = stripe.Webhook.construct_event(
+            payload=data.decode("utf-8"),
+            sig_header=signature,
+            secret=webhook_secret,
+        )
+    except ValueError as e:
+        print("Error parsing payload: {}".format(str(e)))
+        raise HTTPException(status_code=HTTP_400_BAD_REQUEST)
+
+    event_type, *fields = event["type"].split(".")
+
+    response = {"message": f"event type {event['type']} not handled"}
+
+    if event_type in ("product", "price", "customer"):
+        response = stripe_utils.process_stripe_crud_event(
+            event_data=event,
+            table=f"{general_utils.COMPANY}-{general_utils.DEVELOPMENT_ENVIRONMENT}-{event_type}",
+            operation=fields[-1],
+        )
+
+    if event["type"] == "checkout.session.completed":
+        response = stripe_utils.process_checkout_session_completed_event(
+            event_data=event
+        )
+
+    return response
+
+
 @router.get("/products")
 async def get_products(active_only: bool = True) -> List[schemas.Product]:
     return stripe_utils.get_table_items(
@@ -124,4 +124,26 @@ async def get_prices(active_only: bool = True) -> List[schemas.Price]:
 
 
 @router.get("/product-popularity")
-async def get_product_popularity(): ...
+async def get_product_popularity():
+    product_counter = {
+        p["id"]: ({c: p[c] for c in ["id", "images", "name"]} | {"quantity": 0})
+        for p in stripe_utils.get_table_items(
+            tables.PRODUCT_TABLE_NAME,
+        )
+        if p["active"]
+    }
+
+    line_items = stripe_utils.get_line_items()
+
+    for item in line_items:
+        product_id = item["price"]["product"]
+        if product_id in product_counter:
+            product_counter[product_id]["quantity"] += int(item["quantity"])
+
+    return list(
+        sorted(
+            [p for p in product_counter.values()],
+            key=lambda x: x["quantity"],
+            reverse=True,
+        )
+    )

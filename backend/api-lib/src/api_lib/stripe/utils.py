@@ -106,7 +106,7 @@ def process_checkout_session_completed_event(event_data: Dict[str, Any]):
 T = TypeVar("T")
 
 
-def query_and_extract_products_from_statement(
+def query_and_extract_items_from_statement(
     client: DynamoDBClient, statement: str
 ) -> Dict[str, any]:
     serialized_products = client.execute_statement(Statement=statement)["Items"]
@@ -129,7 +129,7 @@ def get_table_items(
     else:
         statement = f'select * from "{table_name}"'
 
-    deserialized_products = query_and_extract_products_from_statement(client, statement)
+    deserialized_products = query_and_extract_items_from_statement(client, statement)
 
     if model is not None:
         return [model(**p) for p in deserialized_products]
@@ -139,4 +139,10 @@ def get_table_items(
 def get_line_items():
     client = U.get_client(service_name="dynamodb")
     checkout_session_table = tables.CHECKOUT_SESSION_COMPLETE_TABLE
-    statement = f'select line_items from "{checkout_session_table}" where active=true'
+    statement = f'select line_items from "{checkout_session_table}"'
+    line_items = []
+    [
+        line_items.extend(line_item["line_items"])
+        for line_item in query_and_extract_items_from_statement(client, statement)
+    ]
+    return line_items
