@@ -15,7 +15,7 @@ class InfrastructureStack(Stack):
 
         ecr.Repository(
             self,
-            f"{utils.COMPANY}-{utils.DEVELOPMENT_ENVIRONMENT}",
+            "General",
             empty_on_delete=True if ("dev" in utils.DEVELOPMENT_ENVIRONMENT) else False,
             removal_policy=(
                 RemovalPolicy.DESTROY

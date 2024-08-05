@@ -29,7 +29,7 @@ CognitoStack = cognito.InfrastructureStack(
 
 ECRStack = ecr.InfrastructureStack(
     app,
-    f"{stack_prefix}",
+    f"{stack_prefix}ECRStack",
 )
 
 app.synth()
