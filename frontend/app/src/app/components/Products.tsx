@@ -183,7 +183,7 @@ const Products = () => {
         <Transition show={!loading}>
             <div className="flex space-x-4 transition duration-500 ease-in data-[closed]:opacity-0">
                 {
-                    (prices !== null && products !== null) ? products.map(((product: Product) => (
+                    (prices !== null && products !== null) ? products.map((product: Product) => (
                         <div className="flex flex-col h-[200px] w-[200px] items-center border rounded-lg p-5 space-y-4" key={product.id + '-div'}>
                             <p key={product.id + '-name'}>{product.name}</p>
                             <div className="border h-[50px] w-[50px]">
@@ -203,7 +203,7 @@ const Products = () => {
                                 <button key={product.id + '-increment-div'} type="button" onClick={() => incrementCart(product)}><p>+</p></button>
                             </div>
                         </div>
-                    ))) : null
+                    )) : null
                 }
             </div>
         </Transition>

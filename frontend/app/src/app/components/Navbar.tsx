@@ -6,6 +6,7 @@ import { AppContext } from '../contexts';
 import { DialogBackdrop, Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
 import LoginButton from './LoginButton';
 import { endpointURL, baseURL } from '../lib/shared';
+import { logout } from '../lib/auth';
 
 interface ActiveScreenProps {
     target: string;
@@ -63,7 +64,7 @@ const Navbar: React.FC = () => {
             checkoutItems.push({ price: cart[k]["price"], quantity: cart[k]["quantity"] })
 
         }
-        const url = new URL('/stripe/create-checkout-session', endpointURLOZB)
+        const url = new URL('/stripe/create-checkout-session', endpointURL)
         url.searchParams.append("return_type", 'json')
         url.searchParams.append("success_url", `${baseURL}?success=true`)
         url.searchParams.append("cancel_url", `${baseURL}?cancel=true`)
@@ -88,18 +89,10 @@ const Navbar: React.FC = () => {
 
     }
 
-    const logout = async () => {
-        try {
-            fetch
-
-        } catch (e) {
-            console.log((e as Error).message)
-        }
-
-    }
-
     const handleLogout = () => {
+        console.log("logging out")
         logout()
+        console.log("finished logging out")
     }
 
 
@@ -113,7 +106,7 @@ const Navbar: React.FC = () => {
 
 
     return (
-        <nav className="top-0 left-0 w-full pb-4 pt-4 h-32 z-100 text-red-400">
+        <nav className="top-0 left-0 w-full pb-4 pt-4 h-32 z-100 text-red-400 border mb-10">
             <div className="flex pl-12 pr-12 items-center justify-between w-full h-full">
                 <CompanyLogo />
                 <div className="flex h-full justify-center items-center space-x-5 pt-2 pb-2">
@@ -123,7 +116,7 @@ const Navbar: React.FC = () => {
                         )
                     }
                     {
-                        appContext.authorized ? <button onClick={() => { handleLogout }} className="border p-2 rounded-md bg-slate-100 hover:bg-slate-200 text-lg">Logout</button> :
+                        appContext.authorized ? <button onClick={handleLogout} className="border p-2 rounded-md bg-slate-100 hover:bg-slate-200 text-lg">Logout</button> :
                             <>
                                 <button onClick={() => setIsLogoutOpen(true)} className="border p-2 rounded-md bg-slate-100 hover:bg-slate-200 text-lg">Login</button>
                                 <Dialog open={isLogoutOpen} onClose={() => setIsLogoutOpen(false)} transition className="fixed inset-0 w-screen flex items-center justify-center bg-black/30 p-4 transition duration-300 ease-out data-[closed]:opacity-0">
