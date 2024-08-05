@@ -64,7 +64,14 @@ const Navbar: React.FC = () => {
             checkoutItems.push({ price: cart[k]["price"], quantity: cart[k]["quantity"] })
 
         }
-        const url = new URL('/stripe/create-checkout-session', endpointURL)
+        const userUrl = new URL('/stripe/create-user-checkout-session', endpointURL)
+        const publicUrl = new URL('/stripe/create-public-checkout-session', endpointURL)
+        var url: URL
+        if (appContext.authorized) {
+            url = userUrl
+        } else {
+            url = publicUrl
+        }
         url.searchParams.append("return_type", 'json')
         url.searchParams.append("success_url", `${baseURL}?success=true`)
         url.searchParams.append("cancel_url", `${baseURL}?cancel=true`)
