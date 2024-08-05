@@ -31,8 +31,8 @@ async def root() -> JSONResponse:
     )
 
 
-app.include_router(oauth2.router, prefix="/oauth2")
+app.include_router(oauth2.router, prefix="/oauth2", tags=["oauth2"])
 app.include_router(
-    user.router, prefix="/user", dependencies=[Depends(oauth2.validate_bearer)]
+    user.router, prefix="/user", dependencies=[Depends(oauth2.validate_bearer)], tags=["user"]
 )
-app.include_router(stripe.router, prefix="/stripe")
+app.include_router(stripe.router, prefix="/stripe", tags=["stripe"])

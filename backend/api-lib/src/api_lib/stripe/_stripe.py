@@ -26,8 +26,8 @@ class PriceItem(BaseModel):
     quantity: int
 
 
-@router.post("/create-checkout-session")
-async def create_checkout_session(
+@router.post("/create-user-checkout-session")
+async def create_user_checkout_session(
     access_token: Annotated[str, Depends(oauth2.validate_bearer)],
     line_items: List[PriceItem],
     return_type: Literal["redirect", "json"] = "json",
@@ -55,6 +55,39 @@ async def create_checkout_session(
         checkout_session = stripe.checkout.Session.create(
             line_items=[p.dict() for p in line_items],
             customer=customer_id,
+            mode="payment",
+            success_url=success_url,
+            cancel_url=cancel_url,
+            payment_method_types=[],
+        )
+    except Exception as e:
+        return str(e)
+
+    if return_type == "redirect":
+        return RedirectResponse(url=checkout_session.url)
+    elif return_type == "json":
+        return JSONResponse(content={"url": f"{checkout_session.url}"})
+
+
+@router.post("/create-public-checkout-session")
+async def create_public_checkout_session(
+    line_items: List[PriceItem],
+    return_type: Literal["redirect", "json"] = "json",
+    success_url: Optional[str] = None,
+    cancel_url: Optional[str] = None,
+):
+    if (
+        general_utils.DEVELOPMENT_LOCATION == "local"
+        and success_url is None
+        and cancel_url is None
+    ):
+        domain_url = "https://0.0.0.0:3000"
+        success_url = domain_url + "?success=true"
+        cancel_url = domain_url + "?success=true"
+
+    try:
+        checkout_session = stripe.checkout.Session.create(
+            line_items=[p.dict() for p in line_items],
             mode="payment",
             success_url=success_url,
             cancel_url=cancel_url,
