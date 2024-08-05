@@ -4,7 +4,7 @@ import os
 import re
 
 import aws_cdk as cdk
-from infrastructure.stacks import cognito, fastapi_lambda
+from infrastructure.stacks import cognito, fastapi_lambda, ecr
 
 company = os.environ.get("COMPANY", "my-test-company-name")
 
@@ -25,6 +25,11 @@ CognitoStack = cognito.InfrastructureStack(
     f"{stack_prefix}CognitoStack",
     identity_providers=["facebook"],
     api_url=FastAPILambdaStack.api_url,
+)
+
+ECRStack = ecr.InfrastructureStack(
+    app,
+    f"{stack_prefix}ECRStack",
 )
 
 app.synth()
