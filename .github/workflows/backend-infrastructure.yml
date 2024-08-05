@@ -48,7 +48,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Initialize Python Backend
         run: |
-          . ./scripts/initialize_backend_python_environment.sh
+          . ./scripts/backend_initialize_python_environment.sh
       - name: Test Infrastructure
         run: |
           . ./scripts/backend_infrastructure_test.sh
