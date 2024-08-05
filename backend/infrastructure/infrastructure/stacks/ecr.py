@@ -15,5 +15,5 @@ class InfrastructureStack(Stack):
         repository = ecr.Repository(
             self,
             f"{utils.COMPANY}-{utils.DEVELOPMENT_ENVIRONMENT}",
-            empty_on_delete=true,
+            empty_on_delete=True,
         )
