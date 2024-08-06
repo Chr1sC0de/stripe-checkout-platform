@@ -44,7 +44,7 @@ const Navbar: React.FC = () => {
     const [isLogoutOpen, setIsLogoutOpen] = useState(false);
     const [isCartOpen, setIsCartOpen] = useState(false)
     const appContext = useContext(AppContext);
-    const cart: { [id: string]: { [id: string]: number } } = appContext.cart
+    const cart: any = appContext.cart
 
     const cartCounter = (): number | null => {
         let content = 0

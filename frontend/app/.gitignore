@@ -39,3 +39,4 @@ certificates
 
 .*
 !.gitginore
+!.dockerignore

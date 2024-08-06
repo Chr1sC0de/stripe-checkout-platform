@@ -135,9 +135,7 @@ const Products = () => {
     }
 
     const productCounter = (product: Product): number => {
-        const cart: {
-            [product_id: string]: { [quantity: string]: number }
-        } = appContext.cart
+        const cart: any = appContext.cart
         if (product.id in cart) {
             return cart[product.id]["quantity"]
         }
@@ -146,7 +144,7 @@ const Products = () => {
     }
 
     const decrementCart = (product: Product): void => {
-        const cart = { ...appContext.cart }
+        const cart: any = { ...appContext.cart }
         if (product.id in cart) {
             const quantity = cart[product.id]["quantity"]
             if (quantity > 0) {
@@ -160,7 +158,7 @@ const Products = () => {
         }
     }
     const incrementCart = (product: Product): void => {
-        const cart = { ...appContext.cart }
+        const cart: any = { ...appContext.cart }
         if (!(product.id in cart)) {
             cart[product.id] = { "name": product.name, "images": product.images, "quantity": 1, "price": product.default_price }
             appContext.setCart(cart)

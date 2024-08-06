@@ -52,9 +52,9 @@ const Recent = () => {
             (context.authorized) ?
                 <div className="flex flex-col space-y-5">
                     {
-                        pastPurchases.map((item: PastPurchase, index: number) => (
+                        pastPurchases.map((item: any, index: number) => (
                             <div className="flex space-x-5 align-middle items-center" key={`${item.product}-${item.created}-${index}`}>
-                                <p>created on: {Date(item.created * 1000).toString()}</p>
+                                <p>created on: {new Date(item.created * 1000).toString()}</p>
                                 <div className="flex flex-col">
                                     <p>{item.details.name}</p>
                                     <img src={item.details.images[0]} alt="" className="h-10" />
