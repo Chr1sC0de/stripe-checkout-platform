@@ -9,7 +9,7 @@ app = FastAPI()
 if utils.DEVELOPMENT_LOCATION == "local":
     from fastapi.middleware.cors import CORSMiddleware
 
-    origins = ["https://0.0.0.0:3000"]
+    origins = ["https://0.0.0.0:3000", "https://13.236.52.117"]
 
     app.add_middleware(
         CORSMiddleware,
@@ -33,6 +33,9 @@ async def root() -> JSONResponse:
 
 app.include_router(oauth2.router, prefix="/oauth2", tags=["oauth2"])
 app.include_router(
-    user.router, prefix="/user", dependencies=[Depends(oauth2.validate_bearer)], tags=["user"]
+    user.router,
+    prefix="/user",
+    dependencies=[Depends(oauth2.validate_bearer)],
+    tags=["user"],
 )
 app.include_router(stripe.router, prefix="/stripe", tags=["stripe"])
